@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="MyBatis 的动态 SQL 功能可以帮助我们根据不同条件拼接 SQL 语句，并自动处理 SQL 语法，动态 SQL 功能通过 OGNL(Object-Graph Navigation Language) 表达式和以下几个标签实现，下方详细介绍。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MyBatis 动态 SQL">
+<meta property="og:url" content="https://cncsl.github.io/2021/1007/MyBatis-%E5%8A%A8%E6%80%81-SQL/index.html">
+<meta property="og:site_name" content="CnCSL&#39;Blog">
+<meta property="og:description" content="MyBatis 的动态 SQL 功能可以帮助我们根据不同条件拼接 SQL 语句，并自动处理 SQL 语法，动态 SQL 功能通过 OGNL(Object-Graph Navigation Language) 表达式和以下几个标签实现，下方详细介绍。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-10-07T22:37:33.000Z">
+<meta property="article:modified_time" content="2022-01-24T08:04:56.237Z">
+<meta property="article:author" content="CnCSL">
+<meta property="article:tag" content="MyBatis">
+<meta property="article:tag" content="后端开发框架学习">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://cncsl.github.io/2021/1007/MyBatis-%E5%8A%A8%E6%80%81-SQL/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://cncsl.github.io/2021/1007/MyBatis-%E5%8A%A8%E6%80%81-SQL/","path":"2021/1007/MyBatis-动态-SQL/","title":"MyBatis 动态 SQL"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MyBatis 动态 SQL | CnCSL'Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">CnCSL'Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">实用主义、极客精神</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#if"><span class="nav-number">1.</span> <span class="nav-text">if</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#choose"><span class="nav-number">2.</span> <span class="nav-text">choose</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#trim"><span class="nav-number">3.</span> <span class="nav-text">trim</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#where"><span class="nav-number">3.1.</span> <span class="nav-text">where</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set"><span class="nav-number">3.2.</span> <span class="nav-text">set</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#trim-%E5%B1%9E%E6%80%A7%E8%AF%A6%E8%A7%A3"><span class="nav-number">3.3.</span> <span class="nav-text">trim 属性详解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#foreach"><span class="nav-number">4.</span> <span class="nav-text">foreach</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="CnCSL"
+      src="/images/logo.jpg">
+  <p class="site-author-name" itemprop="name">CnCSL</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cncsl" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cncsl" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:justitacsl@outlook.com" title="E-Mail → mailto:justitacsl@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cncsl.github.io/2021/1007/MyBatis-%E5%8A%A8%E6%80%81-SQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.jpg">
+      <meta itemprop="name" content="CnCSL">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CnCSL'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MyBatis 动态 SQL
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-10-07 22:37:33" itemprop="dateCreated datePublished" datetime="2021-10-07T22:37:33+00:00">2021-10-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MyBatis/" itemprop="url" rel="index"><span itemprop="name">MyBatis</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>MyBatis 的动态 SQL 功能</strong>可以帮助我们根据不同条件拼接 SQL 语句，并自动处理 SQL 语法，动态 SQL 功能通过 OGNL(Object-Graph Navigation Language) 表达式和以下几个标签实现，下方详细介绍。</p>
+<span id="more"></span>
+
+<p>首先列出本文涉及到的数据表 DDL、entity 对象和 Mybatis 基本配置。</p>
+<ul>
+<li><p>DDL （源自 MySQL 官方演示用的 world_x ，简单修改字段名更符合我们熟知的开发规范）</p>
+  <pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> country
+<span class="token punctuation">(</span>
+    primary_code   <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span>  <span class="token keyword">DEFAULT</span> <span class="token string">''</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span><span class="token punctuation">,</span>
+    country_name   <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">52</span><span class="token punctuation">)</span> <span class="token keyword">DEFAULT</span> <span class="token string">''</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    capital        <span class="token keyword">INT</span>                    <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+    secondary_code <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>  <span class="token keyword">DEFAULT</span> <span class="token string">''</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></li>
+<li><p>Country 对象</p>
+  <pre class="language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Data</span>
+<span class="token annotation punctuation">@Builder</span>
+<span class="token annotation punctuation">@NoArgsConstructor</span>
+<span class="token annotation punctuation">@AllArgsConstructor</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Country</span> <span class="token keyword">implements</span> <span class="token class-name">Serializable</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token comment">/** 主要国家代码 */</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> primaryCode<span class="token punctuation">;</span>
+
+    <span class="token comment">/** 国家名 */</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> countryName<span class="token punctuation">;</span>
+
+    <span class="token comment">/** 首都ID */</span>
+    <span class="token keyword">private</span> <span class="token class-name">Integer</span> capital<span class="token punctuation">;</span>
+
+    <span class="token comment">/** 次要国家代码 */</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> secondaryCode<span class="token punctuation">;</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">long</span> serialVersionUID <span class="token operator">=</span> <span class="token number">1L</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">&#125;</span></code></pre></li>
+<li><p>Mapper 接口大致内容：</p>
+  <pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">pers<span class="token punctuation">.</span>cncsl<span class="token punctuation">.</span>ft<span class="token punctuation">.</span>mybatis<span class="token punctuation">.</span>mapper</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>ibatis<span class="token punctuation">.</span>annotations<span class="token punctuation">.</span></span><span class="token class-name">Param</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>stereotype<span class="token punctuation">.</span></span><span class="token class-name">Repository</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">pers<span class="token punctuation">.</span>cncsl<span class="token punctuation">.</span>ft<span class="token punctuation">.</span>mybatis<span class="token punctuation">.</span>entity<span class="token punctuation">.</span></span><span class="token class-name">Country</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">List</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Map</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Set</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+ * 国家Mapper
+ */</span>
+<span class="token annotation punctuation">@Repository</span>
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">CountryMapper</span> <span class="token punctuation">&#123;</span>
+	<span class="token comment">//...</span>
+<span class="token punctuation">&#125;</span></code></pre></li>
+<li><p>mapper.xml 文件大致内容：</p>
+  <pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token prolog">&lt;?xml version="1.0" encoding="UTF-8"?></span>
+<span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">mapper</span> <span class="token name">PUBLIC</span> <span class="token string">"-//mybatis.org//DTD Mapper 3.0//EN"</span> <span class="token string">"http://mybatis.org/dtd/mybatis-3-mapper.dtd"</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>mapper</span> <span class="token attr-name">namespace</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pers.cncsl.ft.mybatis.mapper.CountryMapper<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>resultMap</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>BaseResultMap<span class="token punctuation">"</span></span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pers.cncsl.ft.mybatis.entity.Country<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>id</span> <span class="token attr-name">column</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>primary_code<span class="token punctuation">"</span></span> <span class="token attr-name">jdbcType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>VARCHAR<span class="token punctuation">"</span></span> <span class="token attr-name">property</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>primaryCode<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>result</span> <span class="token attr-name">column</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>country_name<span class="token punctuation">"</span></span> <span class="token attr-name">jdbcType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>VARCHAR<span class="token punctuation">"</span></span> <span class="token attr-name">property</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>countryName<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>result</span> <span class="token attr-name">column</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>capital<span class="token punctuation">"</span></span> <span class="token attr-name">jdbcType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>INTEGER<span class="token punctuation">"</span></span> <span class="token attr-name">property</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>capital<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>result</span> <span class="token attr-name">column</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>secondary_code<span class="token punctuation">"</span></span> <span class="token attr-name">jdbcType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>VARCHAR<span class="token punctuation">"</span></span> <span class="token attr-name">property</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>secondaryCode<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>resultMap</span><span class="token punctuation">></span></span>
+
+    <span class="token comment">&lt;!--其他 MyBatis 标签--></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>mapper</span><span class="token punctuation">></span></span></code></pre></li>
+</ul>
+<h1 id="if"><a href="#if" class="headerlink" title="if"></a>if</h1><p>if 是最基本的动态 SQL 标签，其 test 属性是一个用于判断输入参数的 OGNL 表达式，当条件判断为真时会拼接其中的内容。与编程语言不同，mybatis 没有 else 标签，if 标签仅用于最基本的条件判断，如果有多个并列的条件需要连续使用相应数量的 if 标签。例如根据主要国家代码或（和）国家名搜索：</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token comment">/**
+* 根据主键或国家名查询一条记录
+*
+* @param primaryKey 主键
+* @param countryName 国家名
+* @return 查询结果
+*/</span>
+<span class="token class-name">Country</span> <span class="token function">selectByCodeOrName</span><span class="token punctuation">(</span><span class="token annotation punctuation">@Param</span><span class="token punctuation">(</span><span class="token string">"primaryKey"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> primaryKey<span class="token punctuation">,</span> <span class="token annotation punctuation">@Param</span><span class="token punctuation">(</span><span class="token string">"countryName"</span><span class="token punctuation">)</span> <span class="token class-name">String</span> countryName<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>select</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>selectByCodeOrName<span class="token punctuation">"</span></span> <span class="token attr-name">resultMap</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>BaseResultMap<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    SELECT primary_code, country_name, capital, secondary_code
+    FROM country
+    WHERE 1 = 1
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>primaryCode != null<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        and primary_code = #&#123;primaryCode, jdbcType=VARCHAR&#125;
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>countryName != null<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+        and country_name = #&#123;countryName, jdbcType=VARCHAR&#125;
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>select</span><span class="token punctuation">></span></span></code></pre>
+
+<p>如下三次调用：</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token class-name">Country</span> resultByCode <span class="token operator">=</span> mapper<span class="token punctuation">.</span><span class="token function">selectByCodeOrName</span><span class="token punctuation">(</span><span class="token string">"CHN"</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">Country</span> resultByName <span class="token operator">=</span> mapper<span class="token punctuation">.</span><span class="token function">selectByCodeOrName</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token string">"China"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token class-name">Country</span> resultByCodeAndName <span class="token operator">=</span> mapper<span class="token punctuation">.</span><span class="token function">selectByCodeOrName</span><span class="token punctuation">(</span><span class="token string">"CHN"</span><span class="token punctuation">,</span> <span class="token string">"China"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<p>从 Mybatis 的日志中可以看到分别执行的 SQL 语句是：</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> <span class="token number">1</span> <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">and</span> primary_code <span class="token operator">=</span> ?
+<span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> <span class="token number">1</span> <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">and</span> country_name <span class="token operator">=</span> ?
+<span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> <span class="token number">1</span> <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">and</span> primary_code <span class="token operator">=</span> ? <span class="token operator">and</span> country_name <span class="token operator">=</span> ?</code></pre>
+
+<h1 id="choose"><a href="#choose" class="headerlink" title="choose"></a>choose</h1><p>choose 标签的应用场景是<strong>多个条件选择一个</strong>，类似编程语言的 switch 语法。它有 when 和 otherwise 两个子标签：</p>
+<ul>
+<li>  when 子标签和 if 类似，test 属性用于判断 OGNL 表达式，一个 otherwise 标签内可以有任意数量、只会命中第一个 test 属性为真的。</li>
+<li>  otherwise 子标签类似 switch 的 default，如果前方所有的 when 子标签条件判断都为假，才会拼接上 otherwise 子标签里的内容。</li>
+</ul>
+<p>例如上面的例子可以进一步改造为（接口内容不变）：</p>
+<pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>select</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>selectByCodeOrName<span class="token punctuation">"</span></span> <span class="token attr-name">resultMap</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>BaseResultMap<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    SELECT primary_code, country_name, capital, secondary_code
+    FROM country
+    WHERE 1 = 1
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>choose</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>when</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>primaryCode != null<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            and primary_code = #&#123;primaryCode, jdbcType=VARCHAR&#125;
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>when</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>otherwise</span><span class="token punctuation">></span></span>
+            and country_name = #&#123;countryName, jdbcType=VARCHAR&#125;
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>otherwise</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>choose</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>select</span><span class="token punctuation">></span></span></code></pre>
+
+<p>和之前同样的参数再调用三次，执行的 SQL 语句分别是：</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> <span class="token number">1</span> <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">and</span> primary_code <span class="token operator">=</span> ?
+<span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> <span class="token number">1</span> <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">and</span> country_name <span class="token operator">=</span> ?
+<span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> <span class="token number">1</span> <span class="token operator">=</span> <span class="token number">1</span> <span class="token operator">and</span> primary_code <span class="token operator">=</span> ?</code></pre>
+
+<h1 id="trim"><a href="#trim" class="headerlink" title="trim"></a>trim</h1><p>trim 标签用于避免使用 if 或 choose 时为了 SQL 语法的正确性而不得不插入类似 <code>1=1 and</code> 这种语句，保证生成的 SQL 更干净、优雅，where 和 set 标签是 trim 的一种具体用法。</p>
+<h2 id="where"><a href="#where" class="headerlink" title="where"></a>where</h2><p>如果 where 标签内的其他标签有返回值，就在标签位置插入一个 where，并剔除后续字符串开头的 AND 和 OR。</p>
+<p>在之前的两个例子中，为了保证生成正确的 SQL，我们加入了 <code>WHERE 1=1</code> 这样的代码段，可以通过 where 标签来优化（接口内容不变）：</p>
+<pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>select</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>selectByCodeOrName<span class="token punctuation">"</span></span> <span class="token attr-name">resultMap</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>BaseResultMap<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    SELECT primary_code, country_name, capital, secondary_code
+    FROM country
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>where</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>choose</span><span class="token punctuation">></span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>when</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>primaryCode != null<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+                and primary_code = #&#123;primaryCode, jdbcType=VARCHAR&#125;
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>when</span><span class="token punctuation">></span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>otherwise</span><span class="token punctuation">></span></span>
+                and country_name = #&#123;countryName, jdbcType=VARCHAR&#125;
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>otherwise</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>choose</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>where</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>select</span><span class="token punctuation">></span></span></code></pre>
+
+<p>改造后仍然用之前的参数调用，执行的 SQL 语句分别是：</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> primary_code <span class="token operator">=</span> ?
+<span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> country_name <span class="token operator">=</span> ?
+<span class="token keyword">SELECT</span> primary_code<span class="token punctuation">,</span> country_name<span class="token punctuation">,</span> capital<span class="token punctuation">,</span> secondary_code <span class="token keyword">FROM</span> country <span class="token keyword">WHERE</span> primary_code <span class="token operator">=</span> ?</code></pre>
+
+<p>可以看出，MyBatis 已经帮我们在生成的 SQL 中插入了 WHERE。</p>
+<h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><p>如果 set 标签内的其他标签有返回值，就在标签位置插入一个 set，并剔除后续字符串结尾处的逗号。</p>
+<p>很常见的需求是仅更新数据表中的指定字段，这些字段需要通过 if 标签处理，而 set 标签用于插入一个 SET 关键字：</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token comment">/**
+* 根据主键和入参的其他数据更新一条记录，入参为 null 的字段不变更
+*
+* @param entity 入参数据
+* @return 更新结果
+*/</span>
+<span class="token keyword">int</span> <span class="token function">updateByPrimaryKeySelective</span><span class="token punctuation">(</span><span class="token class-name">Country</span> entity<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>update</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>updateByPrimaryKeySelective<span class="token punctuation">"</span></span> <span class="token attr-name">parameterType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pers.cncsl.ft.mybatis.entity.Country<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    UPDATE country
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>set</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>countryName != null<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            country_name = #&#123;countryName, jdbcType=VARCHAR&#125;,
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>capital != null<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            capital = #&#123;capital, jdbcType=INTEGER&#125;,
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>secondaryCode != null<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            secondary_code = #&#123;secondaryCode, jdbcType=VARCHAR&#125;,
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>set</span><span class="token punctuation">></span></span>
+    WHERE primary_code = #&#123;primaryCode, jdbcType=VARCHAR&#125;
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>update</span><span class="token punctuation">></span></span></code></pre>
+
+<p>如下调用：</p>
+<pre class="language-Java" data-language="Java"><code class="language-Java">Country update &#x3D; Country.builder().primaryCode(PRIMARY_CODE).countryName(&quot;中国&quot;).build();
+int rows &#x3D; mapper.updateByPrimaryKeySelective(update);</code></pre>
+
+<p>执行的 SQL 为：</p>
+<pre class="language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">UPDATE</span> country <span class="token keyword">SET</span> country_name <span class="token operator">=</span> ? <span class="token keyword">WHERE</span> primary_code <span class="token operator">=</span> ?</code></pre>
+
+<p>Mybatis 帮我们插入了 SET 关键字、并删除了后续多余的逗号。</p>
+<h2 id="trim-属性详解"><a href="#trim-属性详解" class="headerlink" title="trim 属性详解"></a>trim 属性详解</h2><p>trim 标签有以下四个属性：</p>
+<ul>
+<li>  prefix：当 trim 内有内容时，会给内容增加 prefix 指定的前缀</li>
+<li>  prefixOverrides：当 trim 内有内容时，会将内容中匹配的前缀字符串取掉</li>
+<li>  suffix：当 trim 内有内容时，会给内容增加 suffix 指定的后缀</li>
+<li>  suffixOverrides：当 trim 内有内容时，会将内容中匹配的后缀字符串取掉</li>
+</ul>
+<p>所以 where 标签和 set 标签实际相当于：</p>
+<pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>trim</span> <span class="token attr-name">prefix</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>WHERE<span class="token punctuation">"</span></span> <span class="token attr-name">prefixOverrides</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>AND | OR<span class="token punctuation">"</span></span> <span class="token punctuation">></span></span> ... <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>trim</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>trim</span> <span class="token attr-name">prefix</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>SET<span class="token punctuation">"</span></span> <span class="token attr-name">suffixOverrides</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>,<span class="token punctuation">"</span></span> <span class="token punctuation">></span></span> ... <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>trim</span><span class="token punctuation">></span></span></code></pre>
+
+<h1 id="foreach"><a href="#foreach" class="headerlink" title="foreach"></a>foreach</h1><p>顾名思义，foreach 标签用于实现集合遍历，它有以下属性：</p>
+<ul>
+<li>  collection：要迭代遍历的属性名。</li>
+<li>  item：变量名，每次迭代时从集合中取出的值的名称。</li>
+<li>  index：索引值，对 List 集合值为当前索引值，对 Map 集合值为当前 key。</li>
+<li>  open：整个循环内容开头处添加的字符串。</li>
+<li>  close：整个循环内容结尾处添加的字符串。</li>
+<li>  separator：每次循环的分隔符。</li>
+</ul>
+<p>例如根据主键批量查询：</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token comment">/**
+* 根据入参的主键List集合批量查询，使用 List 较为简单。
+*
+* @param keys 主键List集合
+* @return 查询结果
+*/</span>
+<span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Country</span><span class="token punctuation">></span></span> <span class="token function">selectByPrimaryCodeList</span><span class="token punctuation">(</span><span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> keys<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>select</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>selectByPrimaryCodeList<span class="token punctuation">"</span></span> <span class="token attr-name">parameterType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>java.util.Collection<span class="token punctuation">"</span></span>
+        <span class="token attr-name">resultType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pers.cncsl.ft.mybatis.entity.Country<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    SELECT primary_code, country_name, capital, secondary_code
+    FROM country
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>where</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>list != null and !list.isEmpty()<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            primary_code IN
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>foreach</span> <span class="token attr-name">collection</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>list<span class="token punctuation">"</span></span> <span class="token attr-name">open</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>(<span class="token punctuation">"</span></span> <span class="token attr-name">close</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>)<span class="token punctuation">"</span></span> <span class="token attr-name">separator</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>,<span class="token punctuation">"</span></span> <span class="token attr-name">item</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>code<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+                #&#123;code&#125;
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>foreach</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>where</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>select</span><span class="token punctuation">></span></span></code></pre>
+
+<p>注意上面的 where、if 和 foreach 三种标签的组合使用，能避免入参错误导致 MyBatis 拼接出错误的 SQL 语句，不过入参为 null 或空集合时会查出全表。编码时对于这种需求应该小心对待，尽量不传入 null 或空集合。</p>
+<p>collection 属性的值是 Mybatis 中的参数名，通常用 <code>@Param</code> 注解指定，不指定时 Mybatis 会对不同类型的参数添加一个默认的名称，数组和集合有关的默认参数名规则如下：</p>
+<ul>
+<li>  数组类型 <code>array</code></li>
+<li>  Collection 集合（java.util.Collection 的实现类）都为 collection</li>
+<li>  List 也可用 list</li>
+</ul>
+<p>仔细下方内容，重点在于 Mapper 接口中函数入参为数组、List 集合和 Set 集合时 xml 文件中 foreach 标签的属性和内容：</p>
+<pre class="language-java" data-language="java"><code class="language-java"><span class="token comment">/**
+* 根据入参的主键数组批量查询，使用数组是最基础的情况，使用场景不多。
+*
+* @param keys 主键数组
+* @return 查询结果
+*/</span>
+<span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Country</span><span class="token punctuation">></span></span> <span class="token function">selectByPrimaryArray</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> keys<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+* 根据入参的主键List集合批量查询，使用 List 较为简单。
+*
+* @param keys 主键List集合
+* @return 查询结果
+*/</span>
+<span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Country</span><span class="token punctuation">></span></span> <span class="token function">selectByPrimaryCodeList</span><span class="token punctuation">(</span><span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> keys<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+* 根据入参的主键Set集合批量查询，使用 Set 可以保证集合元素唯一。
+*
+* @param keys 主键Set集合
+* @return 查询结果
+*/</span>
+<span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Country</span><span class="token punctuation">></span></span> <span class="token function">selectByPrimaryCodeSet</span><span class="token punctuation">(</span><span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> keys<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+
+<pre class="language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>select</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>selectByPrimaryArray<span class="token punctuation">"</span></span> <span class="token attr-name">parameterType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>java.util.Collection<span class="token punctuation">"</span></span>
+        <span class="token attr-name">resultType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pers.cncsl.ft.mybatis.entity.Country<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    SELECT primary_code, country_name, capital, secondary_code
+    FROM country
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>where</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>array != null and array.length gt 0<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            primary_code IN
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>foreach</span> <span class="token attr-name">collection</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>array<span class="token punctuation">"</span></span> <span class="token attr-name">open</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>(<span class="token punctuation">"</span></span> <span class="token attr-name">close</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>)<span class="token punctuation">"</span></span> <span class="token attr-name">separator</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>,<span class="token punctuation">"</span></span> <span class="token attr-name">item</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>code<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+                #&#123;code&#125;
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>foreach</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>where</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>select</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>select</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>selectByPrimaryCodeList<span class="token punctuation">"</span></span> <span class="token attr-name">parameterType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>java.util.Collection<span class="token punctuation">"</span></span>
+        <span class="token attr-name">resultType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pers.cncsl.ft.mybatis.entity.Country<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    SELECT primary_code, country_name, capital, secondary_code
+    FROM country
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>where</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>list != null and !list.isEmpty()<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            primary_code IN
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>foreach</span> <span class="token attr-name">collection</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>list<span class="token punctuation">"</span></span> <span class="token attr-name">open</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>(<span class="token punctuation">"</span></span> <span class="token attr-name">close</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>)<span class="token punctuation">"</span></span> <span class="token attr-name">separator</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>,<span class="token punctuation">"</span></span> <span class="token attr-name">item</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>code<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+                #&#123;code&#125;
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>foreach</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>where</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>select</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>select</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>selectByPrimaryCodeSet<span class="token punctuation">"</span></span> <span class="token attr-name">parameterType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>java.util.Collection<span class="token punctuation">"</span></span>
+        <span class="token attr-name">resultType</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pers.cncsl.ft.mybatis.entity.Country<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+    SELECT primary_code, country_name, capital, secondary_code
+    FROM country
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>where</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>if</span> <span class="token attr-name">test</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>collection != null and !collection.isEmpty()<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+            primary_code IN
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>foreach</span> <span class="token attr-name">collection</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>collection<span class="token punctuation">"</span></span> <span class="token attr-name">open</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>(<span class="token punctuation">"</span></span> <span class="token attr-name">close</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>)<span class="token punctuation">"</span></span> <span class="token attr-name">separator</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>,<span class="token punctuation">"</span></span> <span class="token attr-name">item</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>code<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>
+                #&#123;code&#125;
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>foreach</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>if</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>where</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>select</span><span class="token punctuation">></span></span></code></pre>
+
+<p>foreach 还可实现批量插入和动态更新功能，不过这两个功能在开发中用到的场景不多，就不详细说了。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>CnCSL
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://cncsl.github.io/2021/1007/MyBatis-%E5%8A%A8%E6%80%81-SQL/" title="MyBatis 动态 SQL">https://cncsl.github.io/2021/1007/MyBatis-动态-SQL/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/MyBatis/" rel="tag"># MyBatis</a>
+              <a href="/tags/%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0/" rel="tag"># 后端开发框架学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/0616/Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="prev" title="Redis 数据类型">
+                  <i class="fa fa-chevron-left"></i> Redis 数据类型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/1123/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E7%89%A9/" rel="next" title="数据库事物">
+                  数据库事物 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CnCSL</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.13.2/dist/mermaid.min.js","integrity":"sha256-UIQPVkGifpwMvDH5yGgORJ9sSTDq38zz6BGU6dNaKhM="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

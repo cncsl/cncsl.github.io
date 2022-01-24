@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="记录一下工作半年之后发现的现象和对应的思考。  项目最终一定会成为“屎山” 百分之八十的代码是特殊或异常情况处理 参数校验是一把双刃剑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工作半年之后的总结和思考">
+<meta property="og:url" content="https://cncsl.github.io/2021/0111/%E5%B7%A5%E4%BD%9C%E5%8D%8A%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%80%9D%E8%80%83/index.html">
+<meta property="og:site_name" content="CnCSL&#39;Blog">
+<meta property="og:description" content="记录一下工作半年之后发现的现象和对应的思考。  项目最终一定会成为“屎山” 百分之八十的代码是特殊或异常情况处理 参数校验是一把双刃剑">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-11T22:13:47.000Z">
+<meta property="article:modified_time" content="2022-01-24T08:04:56.237Z">
+<meta property="article:author" content="CnCSL">
+<meta property="article:tag" content="杂谈">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://cncsl.github.io/2021/0111/%E5%B7%A5%E4%BD%9C%E5%8D%8A%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%80%9D%E8%80%83/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://cncsl.github.io/2021/0111/%E5%B7%A5%E4%BD%9C%E5%8D%8A%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%80%9D%E8%80%83/","path":"2021/0111/工作半年之后的总结和思考/","title":"工作半年之后的总结和思考"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>工作半年之后的总结和思考 | CnCSL'Blog</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">CnCSL'Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">实用主义、极客精神</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E6%9C%80%E7%BB%88%E4%B8%80%E5%AE%9A%E4%BC%9A%E6%88%90%E4%B8%BA%E2%80%9C%E5%B1%8E%E5%B1%B1%E2%80%9C"><span class="nav-number">1.</span> <span class="nav-text">项目最终一定会成为“屎山“</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%99%BE%E5%88%86%E4%B9%8B%E5%85%AB%E5%8D%81%E7%9A%84%E4%BB%A3%E7%A0%81%E6%98%AF%E7%89%B9%E6%AE%8A%E6%88%96%E5%BC%82%E5%B8%B8%E6%83%85%E5%86%B5%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">百分之八十的代码是特殊或异常情况处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8C%E6%98%AF%E4%B8%80%E6%8A%8A%E5%8F%8C%E5%88%83%E5%89%91"><span class="nav-number">3.</span> <span class="nav-text">参数校验是一把双刃剑</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="CnCSL"
+      src="/images/logo.jpg">
+  <p class="site-author-name" itemprop="name">CnCSL</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cncsl" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cncsl" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:justitacsl@outlook.com" title="E-Mail → mailto:justitacsl@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cncsl.github.io/2021/0111/%E5%B7%A5%E4%BD%9C%E5%8D%8A%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%80%9D%E8%80%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.jpg">
+      <meta itemprop="name" content="CnCSL">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CnCSL'Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          工作半年之后的总结和思考
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-01-11 22:13:47" itemprop="dateCreated datePublished" datetime="2021-01-11T22:13:47+00:00">2021-01-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>记录一下工作半年之后发现的现象和对应的思考。</p>
+<ul>
+<li>项目最终一定会成为“屎山”</li>
+<li>百分之八十的代码是特殊或异常情况处理</li>
+<li>参数校验是一把双刃剑</li>
+</ul>
+<span id="more"></span>
+
+<h1 id="项目最终一定会成为“屎山“"><a href="#项目最终一定会成为“屎山“" class="headerlink" title="项目最终一定会成为“屎山“"></a>项目最终一定会成为“屎山“</h1><p>大学毕业之前就知道程序员最头疼的事是维护老项目，尤其是代码质量很差的”屎山”。很幸运的是，工作后遇到的第一个项目就是维护一个屎山，这个项目是庞大复杂系统中的一个模块，由于大版本的更新迭代导致现有功能已无法使用，必须进行重新适配。更幸运的是，领导给了我极大的自由度和很长时间自由发挥。</p>
+<p>刚接手时，整个项目真是一团乱麻，定义最主要业务逻辑的类文件有四千行、其中还有一个九百多行的 run 函数，另外还有一半的类在迭代过程中已经不再使用但是没有删除。截止到第三轮系统测试、整个项目持续了两个月，全程由我一个人完成，经历了从日志文件和主要代码中倒推出业务逻辑状态机、通读所有源码删除无用部分、调整混杂在一起的各层代码、优化代码等过程。</p>
+<p>和无法违背的热力学第二定律一样，我认为只要一个项目还有维护的价值、还在迭代中，它的代码质量就一定会越来越差。有以下两个主要原因：</p>
+<ul>
+<li>有维护需要的项目，很可能会不断的加入新的功能，而再有经验的架构师在最初设计时也不可能考虑到所有的情况。从这个角度来说，<strong>设计上的缺陷是一定存在的，没有人敢笃定自己的设计万无一失</strong>，设计之初只能尽可能的提高设计质量。</li>
+<li>软件开发团队自身就是复杂的，每个人水平参差不齐、会有人离开有人加入，老员工写下一段代码时经历了什么样的思考和辩证，可能永远也没机会让后来加入的新人了解。这种情况下，维护老项目的新员工就可能破坏原本清晰的代码结构。</li>
+</ul>
+<h1 id="百分之八十的代码是特殊或异常情况处理"><a href="#百分之八十的代码是特殊或异常情况处理" class="headerlink" title="百分之八十的代码是特殊或异常情况处理"></a>百分之八十的代码是特殊或异常情况处理</h1><p>理想情况下，用户会用最主流的浏览器、把正确账号密码填在正确的位置然后登陆。实际情况中，用户可能会用 IE 浏览器、可能会把用户米密码填反中，甚至访问应用的都不是活生生的用户。</p>
+<p>于是，前端需要做表单验证以验证用户的输入，做多浏览器适配以方便用户；而后端需要做入参校验防止后台程序被前端同事和爬虫搞崩。下面是作为一个 Java 语言后端开发者对于一些可能的异常情况的总结。</p>
+<ul>
+<li>Java 的基础数据类型含有默认值，因此 DAO 类中的基本数据类型要使用包装类，避免数据库中相关值实际为 null，查询结果却为 0 的情况发生。</li>
+<li>除了考虑数据类型自身的范围限制避免溢出的情况以外，在特定的业务场景中，数据类型的值可能含有特定范围，例如用于计数时 int（或 long）不可能为复数等。</li>
+<li>字符串类型的特殊值有 null 和空字符串，很多情况下这两个特殊值会触发 Bug，但有些特殊情况时又是业务逻辑息息相关的，需要谨慎处理。</li>
+<li>字符串中的转义字符处理：前后端数据交互时，如果使用 JSON 格式需要对用户输入的 <code>&#123;</code>、<code>&#125;</code>、<code>&quot;</code>、<code>,</code> 等特殊符号进行转义；如果使用 XML 格式需要对用户输入的 <code>&lt;</code>、<code>&gt;</code>、<code>&quot;</code>等特殊符号进行转义。</li>
+</ul>
+<h1 id="参数校验是一把双刃剑"><a href="#参数校验是一把双刃剑" class="headerlink" title="参数校验是一把双刃剑"></a>参数校验是一把双刃剑</h1><p>在维护前文提到的项目时，有一个后端接口查询经常超时，导致前端总是弹出“连接超时“的弹窗警告。这是一个统计服务器资源使用量的功能，前端调用接口查询到结果后会将数据渲染为一个折线图，展示过去一段时间内相关资源的占用情况。经过分析，发现该接口调用最耗时的过程是和主控节点进行 MQ 通讯进行参数校验。与产品经理沟通后认为这个接口具有<strong>调用频繁</strong>、<strong>入参固定</strong>、<strong>需要快速返回</strong>的特点，而用户使用时关心的是某一时间段的资源占用的变化情况、非特定时间点的瞬时数据。后来解决方案是删除了一大段的条件判断，使用 try-catch 捕获了一个通用异常，发生异常时直接返回上一次的统计结果。</p>
+<p>由此可见，参数校验也是一把双刃剑，提高程序可靠性的代价就是执行效率变慢，很多时候需要根据实际情况在性能和安全性之间做出取舍。下面关于参数校验的规范摘自《阿里巴巴 Java 开发手册》。</p>
+<blockquote>
+<p>【参考】下列情形，需要进行参数校验：</p>
+<ol>
+<li>调用频次低的方法。</li>
+<li>执行时间开销很大的方法。此情形中，参数校验时间几乎可以忽略不计，但如果因为参数错误导致中间执行回退、或者错误，那得不偿失。</li>
+<li>需要极高稳定性和可用性的方法。</li>
+<li>对外提供的开放接口，不管是RPC/API/HTTP接口。</li>
+<li>敏感权限入口。</li>
+</ol>
+<p>【参考】下列情形，不需要进行参数校验：</p>
+<ol>
+<li>极有可能被循环调用的方法。但在方法说明里必须注明外部参数检查要求。 </li>
+<li>底层调用频度比较高的方法。毕竟是像纯净水过滤的最后一道，参数错误不太可能到底层才会暴露问题。一般 DAO 层与 Service 层都在同一个应用中，部署在同一台服务器中，所以 DAO 的参数校验，可以省略。</li>
+<li>被声明成private只会被自己代码所调用的方法，如果能够确定调用方法的代码传入参数已经做过检查或者肯定不会有问题，此时可以不校验参数。</li>
+</ol>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>CnCSL
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://cncsl.github.io/2021/0111/%E5%B7%A5%E4%BD%9C%E5%8D%8A%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%80%9D%E8%80%83/" title="工作半年之后的总结和思考">https://cncsl.github.io/2021/0111/工作半年之后的总结和思考/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9D%82%E8%B0%88/" rel="tag"># 杂谈</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/1103/%E8%AE%BF%E9%97%AE%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/" rel="prev" title="访问一个网站的全过程">
+                  <i class="fa fa-chevron-left"></i> 访问一个网站的全过程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/0204/Linux%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%A7%BF%E5%8A%BF/" rel="next" title="Linux查找文件的正确姿势">
+                  Linux查找文件的正确姿势 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CnCSL</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.13.2/dist/mermaid.min.js","integrity":"sha256-UIQPVkGifpwMvDH5yGgORJ9sSTDq38zz6BGU6dNaKhM="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
