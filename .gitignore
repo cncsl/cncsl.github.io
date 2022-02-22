@@ -1,0 +1,12 @@
+# npm
+node_modules/
+
+# Mac
+.DS_Store
+
+# hexo
+public/
+db.json
+
+#other
+*.log
