@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.1.0">
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
@@ -17,11 +16,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="除了使用阶段外，Spring 将 bean 的生命周期定义为实例化、属性填充、初始化和销毁四个阶段，并为每个阶段提供了多个拓展点用于自定义 bean 的创建过程。这篇文章介绍了 bean 的生命周期和其各个拓展点，通过图示生动的展示，并结合一个实例来演示全过程。">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.11.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="除了使用阶段外，Spring 将 bean 的生命周期定义为实例化、属性填充、初始化和销毁四个阶段，并为每个阶段提供了多个拓展点用于自定义 bean 的创建过程。这篇文章介绍了 bean 的生命周期和其各个拓展点，通过图示生动的展示，并结合一个实例来演示全过程。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring bean 生命周期">
 <meta property="og:url" content="https://cncsl.github.io/2021/0303/Spring-bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/index.html">
@@ -29,7 +29,7 @@
 <meta property="og:description" content="除了使用阶段外，Spring 将 bean 的生命周期定义为实例化、属性填充、初始化和销毁四个阶段，并为每个阶段提供了多个拓展点用于自定义 bean 的创建过程。这篇文章介绍了 bean 的生命周期和其各个拓展点，通过图示生动的展示，并结合一个实例来演示全过程。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-03T21:52:41.000Z">
-<meta property="article:modified_time" content="2022-02-22T08:38:27.758Z">
+<meta property="article:modified_time" content="2022-04-03T05:14:41.021Z">
 <meta property="article:author" content="CnCSL">
 <meta property="article:tag" content="Spring">
 <meta name="twitter:card" content="summary">
@@ -44,6 +44,7 @@
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>Spring bean 生命周期 | CnCSL'Blog</title>
   
+
 
 
 
@@ -72,7 +73,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">CnCSL'Blog</h1>
+      <p class="site-title">CnCSL'Blog</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">实用主义、极客精神</p>
@@ -87,12 +88,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a></li>
   </ul>
 </nav>
 
@@ -205,11 +201,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/logo.jpg">
       <meta itemprop="name" content="CnCSL">
-      <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="CnCSL'Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Spring bean 生命周期 | CnCSL'Blog">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -295,7 +296,7 @@ postProcessAfterInstantiation --&gt; Populate[属性填充]
 <li><code>ApplicationEventPublisherAware#setApplicationEventPublisher</code>（仅在 ApplicationContext 中有效）</li>
 <li><code>MessageSourceAware#setMessageSource</code>（仅在 ApplicationContext 中有效）</li>
 <li><code>ApplicationContextAware#setApplicationContext</code>（仅在 ApplicationContext 中有效）</li>
-<li> <code>ServletContextAware#setServletContext</code>（仅在 WebApplicationContext 中有效）</li>
+<li><code>ServletContextAware#setServletContext</code>（仅在 WebApplicationContext 中有效）</li>
 </ol>
 <pre class="mermaid">
 flowchart LR
@@ -347,7 +348,10 @@ InstantiationAwareBeanPostProcessor: +postProcessBeforeInstantiation()
 InstantiationAwareBeanPostProcessor: +postProcessAfterInstantiation()
     
 DestructionAwareBeanPostProcessor: +postProcessBeforeDestruction()
-</pre></li>
+</pre>
+
+
+</li>
 <li><p>属性填充阶段的多个拓展点可以根据其用途进行分类便于记忆</p>
 </li>
 <li><p><em>自定义的初始化方法和自定义的销毁方法可以认为是一对</em>，*<code>InitializingBean</code> 接口和 <code>DisposableBean</code> 接口可以认为是一对*，它们之间不应该交叉出现（例如通过自定义的初始化方法定义了初始化过程，却通过 <code>DispoableBean#destory</code> 执行销毁过程）。</p>
@@ -569,13 +573,15 @@ DestructionAwareBeanPostProcessor: +postProcessBeforeDestruction()
 <li><p>SpringBoot 启动，初始化容器 </p>
 </li>
 <li><p>优先加载 <code>BeanPostProcessor</code> 的实现类</p>
-<pre class="language-text" data-language="text"><code class="language-text">[main] CustomInstantiationProcessor &lt;init&gt; : InstantiationAwareBeanPostProcessor 优先初始化 
-[main] CustomInitializationProcessor &lt;init&gt; : BeanPostProcessor 优先初始化 
-[main] CustomDestructionProcessor &lt;init&gt; : DestructionAwareBeanPostProcessor 优先初始化 </code></pre></li>
+<pre class="language-text" data-language="text"><code class="language-text">[main] CustomInstantiationProcessor &lt;init> : InstantiationAwareBeanPostProcessor 优先初始化 
+[main] CustomInitializationProcessor &lt;init> : BeanPostProcessor 优先初始化 
+[main] CustomDestructionProcessor &lt;init> : DestructionAwareBeanPostProcessor 优先初始化 </code></pre>
+</li>
 <li><p>实例化阶段的日志</p>
 <pre class="language-text" data-language="text"><code class="language-text">[main] CustomInstantiationProcessor postProcessBeforeInstantiation : simpleBean 即将实例化 
-[main] SimpleBean &lt;init&gt; : 构造函数执行，创建实例 
-[main] CustomInstantiationProcessor postProcessAfterInstantiation : simpleBean 实例化完成 </code></pre></li>
+[main] SimpleBean &lt;init> : 构造函数执行，创建实例 
+[main] CustomInstantiationProcessor postProcessAfterInstantiation : simpleBean 实例化完成 </code></pre>
+</li>
 <li><p>属性填充阶段的日志</p>
 <pre class="language-text" data-language="text"><code class="language-text">[main] SimpleBean setEmptyBean : setter 函数执行，装配了 cncsl.learn.blc.EmptyBean@2f67a4d3 
 [main] SimpleBean setBeanName : bean 名称为 simpleBean 
@@ -586,17 +592,20 @@ DestructionAwareBeanPostProcessor: +postProcessBeforeDestruction()
 [main] SimpleBean setResourceLoader : 资源解析器对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
 [main] SimpleBean setApplicationEventPublisher : 事件发布器对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
 [main] SimpleBean setMessageSource : 消息源对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
-[main] SimpleBean setApplicationContext : 应用程序上下文对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec </code></pre></li>
+[main] SimpleBean setApplicationContext : 应用程序上下文对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec </code></pre>
+</li>
 <li><p>初始化阶段</p>
 <pre class="language-text" data-language="text"><code class="language-text">[main] CustomInitializationProcessor postProcessBeforeInitialization : simpleBean 即将初始化 
 [main] SimpleBean initMethod : 自定义的初始化方法 
 [main] SimpleBean afterPropertiesSet : 属性装配全部完成，校验无误，开始初始化 
 [main] CustomInitializationProcessor postProcessAfterInitialization : simpleBean 初始化完成 
 [main] cncsl.learn.blc.DemoApplication logStarted : Started DemoApplication in 0.817 seconds (JVM running for 1.219) 
-[main] DemoApplication run : cncsl.learn.blc.SimpleBean@295cf707 使用 </code></pre></li>
+[main] DemoApplication run : cncsl.learn.blc.SimpleBean@295cf707 使用 </code></pre>
+</li>
 <li><p>使用阶段</p>
 <pre class="language-text" data-language="text"><code class="language-text">[main] cncsl.learn.blc.DemoApplication logStarted : Started DemoApplication in 1.135 seconds (JVM running for 2.028) 
-[main] DemoApplication run : cncsl.learn.blc.SimpleBean@4a335fa8 使用 </code></pre></li>
+[main] DemoApplication run : cncsl.learn.blc.SimpleBean@4a335fa8 使用 </code></pre>
+</li>
 <li><p>销毁阶段</p>
 <pre class="language-text" data-language="text"><code class="language-text">[SpringContextShutdownHook] CustomDestructionProcessor postProcessBeforeDestruction : simpleBean 即将销毁 
 [SpringContextShutdownHook] SimpleBean destroyMethod : 自定义的销毁方法 
@@ -682,7 +691,7 @@ DestructionAwareBeanPostProcessor: +postProcessBeforeDestruction()
   
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.13.2/dist/mermaid.min.js","integrity":"sha256-UIQPVkGifpwMvDH5yGgORJ9sSTDq38zz6BGU6dNaKhM="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js","integrity":"sha256-7wT34TI0pEBeEFoi4z+vhuSddGh6vUTMWdqJ2SDe2jg="}}</script>
   <script src="/js/third-party/tags/mermaid.js"></script>
 
 
