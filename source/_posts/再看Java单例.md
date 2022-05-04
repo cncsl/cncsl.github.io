@@ -123,7 +123,7 @@ public class Main {
 
 双锁检查是经常出现于面试题中的实现方式，具有线程安全和 Lazy 初始化的特点。需要自行实现线程安全的单例初始化，且要避免指令重排序导致的安全问题，实现难度较高。
 
-- 为了避免指令重排序导致的线程安全问题（详细文本请查看本博客 《Java运行时数据区和内存模型》），需要给单例引用添加 `volatile` 修饰：
+- 为了避免指令重排序导致的线程安全问题需要给单例引用添加 `volatile` 修饰：
   
   ```java
   private volatile static Singleton instance;
@@ -153,6 +153,49 @@ public class Main {
 ```
 
 从日志可以看出，类加载之后并没有立即初始化，实际需要调用到单例的功能函数前才进行了初始化。
+
+### volatile 关键字的作用
+
+`volatile` 修饰的变量有可见性和禁止指令重排序优化两个特点：
+
+- 可见性：一个线程修改了 `volatile` 变量，其他线程立即可知。
+- 禁止指令重排序优化：处理器为了提高运算单元的利用率，会对指令进行乱序执行优化，处理器能够保证经过乱序的指令和原始顺序的指令执行结果一致。
+
+在多线程环境中，指令重排序优化可能导致访问共享数据出错。这也是双锁检查式单例的单例变量用 volatile 修饰的原因。
+
+Java 源码中 `instance = new Singleton();` 一句对应的字节码指令为：
+
+```
+NEW Singleton
+DUP
+INVOKESPECIAL Singleton.<init> ()V
+PUTSTATIC Singleton.instance : LSingleton;
+```
+
+总共分为四个步骤：
+
+1. `NEW` 指令创建对象（此时还没有执行构造函数，对象的所有成员变量都是默认的“零值”），将对象引用压入操作数栈。
+2. `DUP` 指令将当前操作数栈顶的值拷贝一份（此时操作数栈顶的两个元素是两个相同的、值为前一步创建的对象的引用）。
+3. `INVOKESPECIAL` 指令会调用当前操作数栈顶的对象的 `<init>` 方法，该方法是根据空参的构造函数生成的。
+4. `PUTSTATIC` 指令将操作数栈顶的对象引用赋值给 Singleton 类的 instance 引用。
+
+根据指令重排序的原则，三、四两步之间乱序执行不会影响结果，如果未加 `volatile` 修饰、发生了指令重排，且两个线程恰好按照如下步骤执行就会发生异常情况（字节码指令和处理器指令没有对应关系，所以这个例子并不是很严谨，但理解当前的上下文够用了）：
+
+{% mermaid sequenceDiagram %}
+    threadOne ->> threadOne : NEW Singleton
+    threadOne ->> threadOne : DUP
+    threadOne ->> Singleton.class : PUTSTATIC Singleton.instance : LSingleton;
+
+    threadTwo ->> Singleton.class : 调用 getInstance() 函数
+    Singleton.class ->> threadTwo : Singleton.instance 引用不为 null，返回引用值
+    
+    threadTwo ->> threadTwo : 使用单例对象
+    Note over threadTwo : 此时单例对象还未完全初始化，发生异常
+    
+    threadOne ->> threadOne : INVOKESPECIAL
+{% endmermaid %}
+
+而如果 `instance` 使用 `volatile` 修饰，在指令 `INVOKESPECIAL` 和 `PUTSTATIC` 之间就不会发生指令重排，确保了上述问题不会发生。另外请注意，Java 中双锁检查式方式实现的单例在 Java 5 之后才能完全保证可用，此前版本依然会出现问题。
 
 ## 静态内部类式
 
