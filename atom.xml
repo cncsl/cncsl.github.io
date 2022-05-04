@@ -6,7 +6,7 @@
   <link href="https://cncsl.github.io/atom.xml" rel="self"/>
   
   <link href="https://cncsl.github.io/"/>
-  <updated>2022-04-03T05:14:41.021Z</updated>
+  <updated>2022-05-04T09:20:50.252Z</updated>
   <id>https://cncsl.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://cncsl.github.io/2022/0112/Java-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/"/>
     <id>https://cncsl.github.io/2022/0112/Java-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/</id>
     <published>2022-01-12T11:10:01.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;动态代理是 Java 反射的一种使用场景，只要有一个接口，就能在运行时动态生成类型安全的字节码文件，可实现资源延迟加载（同传统代理模式的能力）、切面增强等功能，可以说是 Spring 的基石之一。&lt;/p&gt;
@@ -43,7 +43,7 @@
     <link href="https://cncsl.github.io/2021/1123/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E7%89%A9/"/>
     <id>https://cncsl.github.io/2021/1123/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E7%89%A9/</id>
     <published>2021-11-23T16:23:04.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;事物 Transaction 用于确保数据库的一致性。当需要更新多条（两条及以上）数据时，可以确保两次更新同时成功或同时失败；当数据被并发的读和修改时，可以确保读线程访问到完整的更新后数据或更新前数据。&lt;/p&gt;</summary>
@@ -62,7 +62,7 @@
     <link href="https://cncsl.github.io/2021/1007/MyBatis-%E5%8A%A8%E6%80%81-SQL/"/>
     <id>https://cncsl.github.io/2021/1007/MyBatis-%E5%8A%A8%E6%80%81-SQL/</id>
     <published>2021-10-07T22:37:33.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;&lt;strong&gt;MyBatis 的动态 SQL 功能&lt;/strong&gt;可以帮助我们根据不同条件拼接 SQL 语句，并自动处理 SQL 语法，动态 SQL 功能通过 OGNL(Object-Graph Navigation Language) 表达式和以下几个标签实现，下方详细介绍。&lt;/p&gt;</summary>
@@ -83,7 +83,7 @@
     <link href="https://cncsl.github.io/2021/0616/Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
     <id>https://cncsl.github.io/2021/0616/Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</id>
     <published>2021-06-16T23:44:41.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;Redis 可以理解为一个大号的 Map，其中所有的数据都采用 key:value 的形式维护，在 Redis 中，一个 key 总是对应一个 value。其中 key 永远是字符串，而一般提到 Redis 的数据类型，指的是其存储的 value 的数据类型。下面介绍 Redis 常见的数据类型，并简单介绍常见的相关指令。&lt;/p&gt;</summary>
@@ -102,7 +102,7 @@
     <link href="https://cncsl.github.io/2021/0520/%E5%8F%8D%E5%B0%84(%E4%B8%80)/"/>
     <id>https://cncsl.github.io/2021/0520/%E5%8F%8D%E5%B0%84(%E4%B8%80)/</id>
     <published>2021-05-20T22:49:45.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;反射作为 Java 高级特性之一，在框架开发中使用很多。&lt;/p&gt;</summary>
@@ -123,7 +123,7 @@
     <link href="https://cncsl.github.io/2021/0312/%E5%86%8D%E7%9C%8BJava%E5%8D%95%E4%BE%8B/"/>
     <id>https://cncsl.github.io/2021/0312/%E5%86%8D%E7%9C%8BJava%E5%8D%95%E4%BE%8B/</id>
     <published>2021-03-12T21:54:46.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;此前面试遇到了单例问题，本以为已经背的滚瓜烂熟，没想到被问单例如何避免被反射和序列化破坏，虽然后来还是等到了通知，但还是复习一下单例的实现方式，并学习防止反射和序列化破坏的手段。&lt;/p&gt;</summary>
@@ -140,14 +140,14 @@
   </entry>
   
   <entry>
-    <title>Java运行时数据区和内存模型</title>
+    <title>Java运行时数据区</title>
     <link href="https://cncsl.github.io/2021/0311/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"/>
     <id>https://cncsl.github.io/2021/0311/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</id>
     <published>2021-03-11T22:20:46.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
-    <summary type="html">&lt;p&gt;运行时数据区是指对 JVM 运行过程中涉及到的内存根据功能、目的进行的划分，而内存模型可以理解为对内存进行存取操作的过程定义。总是有人望文生义的将前者描述为 “Java 内存模型”，最近在阅读《深入理解 Java 虚拟机》之后对二者加深了部分理解，于是写一篇相关内容的学习总结。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;运行时数据区是指对 JVM 运行过程中涉及到的内存根据功能、目的进行的划分。最近在阅读《深入理解 Java 虚拟机》之后终于了解这方面知识，于是写一篇相关内容的学习总结。&lt;/p&gt;</summary>
     
     
     
@@ -156,8 +156,6 @@
     
     <category term="JVM" scheme="https://cncsl.github.io/tags/JVM/"/>
     
-    <category term="设计模式" scheme="https://cncsl.github.io/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
   </entry>
   
   <entry>
@@ -165,7 +163,7 @@
     <link href="https://cncsl.github.io/2021/0303/Spring-bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"/>
     <id>https://cncsl.github.io/2021/0303/Spring-bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</id>
     <published>2021-03-03T21:52:41.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;除了使用阶段外，Spring 将 bean 的生命周期定义为实例化、属性填充、初始化和销毁四个阶段，并为每个阶段提供了多个拓展点用于自定义 bean 的创建过程。这篇文章介绍了 bean 的生命周期和其各个拓展点，通过图示生动的展示，并结合一个实例来演示全过程。&lt;/p&gt;</summary>
@@ -184,7 +182,7 @@
     <link href="https://cncsl.github.io/2021/0204/Linux%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%A7%BF%E5%8A%BF/"/>
     <id>https://cncsl.github.io/2021/0204/Linux%E6%9F%A5%E6%89%BE%E6%96%87%E4%BB%B6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%A7%BF%E5%8A%BF/</id>
     <published>2021-02-04T21:40:38.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;Linux 系统中查找文件的命令有 &lt;code&gt;which&lt;/code&gt;、&lt;code&gt;whereis&lt;/code&gt;、&lt;code&gt;locate&lt;/code&gt; 和 &lt;code&gt;find&lt;/code&gt; 等，本文对这四条命令进行简单的介绍、列举了一些简单的使用方式。&lt;/p&gt;</summary>
@@ -203,7 +201,7 @@
     <link href="https://cncsl.github.io/2021/0111/%E5%B7%A5%E4%BD%9C%E5%8D%8A%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%80%9D%E8%80%83/"/>
     <id>https://cncsl.github.io/2021/0111/%E5%B7%A5%E4%BD%9C%E5%8D%8A%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%80%BB%E7%BB%93%E5%92%8C%E6%80%9D%E8%80%83/</id>
     <published>2021-01-11T22:13:47.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;记录一下工作半年之后发现的现象和对应的思考。&lt;/p&gt;
@@ -225,7 +223,7 @@
     <link href="https://cncsl.github.io/2020/1103/%E8%AE%BF%E9%97%AE%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/"/>
     <id>https://cncsl.github.io/2020/1103/%E8%AE%BF%E9%97%AE%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%85%A8%E8%BF%87%E7%A8%8B/</id>
     <published>2020-11-03T22:55:02.000Z</published>
-    <updated>2022-04-03T05:14:41.021Z</updated>
+    <updated>2022-05-04T09:20:50.252Z</updated>
     
     
     <summary type="html">&lt;p&gt;我们几乎每天都在访问各种各样的网站，通过手动输入网址或点击超链接（相当于浏览器自动的输入网址），却很少有人计较从输入网址开始到浏览器呈现页面，计算机都进行了什么工作，看似简单的上网，实际上流程并不简单，其中也蕴含着人类的科技结晶。&lt;/p&gt;</summary>
