@@ -361,7 +361,7 @@ codeblock:
         dark: github-dark
     prism:
         light: prism
-        dark: prism-okaidia
+        dark: prism-dark
     # Add copy button on codeblock
     copy_button:
         enable: false
@@ -844,6 +844,7 @@ pace:
     # big-counter | bounce | barber-shop | center-atom | center-circle | center-radar | center-simple
     # corner-indicator | fill-left | flat-top | flash | loading-bar | mac-osx | material | minimal
     theme: minimal
+
 # Canvas ribbon
 # For more information: https://github.com/hustcc/ribbon.js
 canvas_ribbon:
@@ -865,7 +866,7 @@ vendors:
     # The default CDN provider of third-party plugins.
     # Available values: local | jsdelivr | unpkg | cdnjs | custom
     # Dependencies for `plugins: local`: https://github.com/next-theme/plugins
-    plugins: jsdelivr
+    plugins: cdnjs
     # Custom CDN URL
     # For example:
     # custom_cdn_url: https://cdn.jsdelivr.net/npm/${npm_name}@${version}/${minified}

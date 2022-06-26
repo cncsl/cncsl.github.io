@@ -13,16 +13,17 @@ tags: [Java, 设计模式]
 
 其他相关资料中，最多的能数出八种单例实现方式，而实际上其中有些实现并不具备实际意义，在文中出现也仅是为了指出存在的问题便于引出下文。本文仅介绍有实际意义的单例实现模式。为了缩减篇幅，先给出一个后续出现代码的模板的类图：
 
-{% mermaid classDiagram %}
-class Singleton {
-  -Logger log$
-  -Singleton instance$
-  +getInstance()$ Singleton
-  +loadClass()$ void
-  +function() void
-  -Singleton()
-}
-{% endmermaid %}
+```mermaid
+classDiagram
+    class Singleton {
+        -Logger log$
+        -Singleton instance$
+        +getInstance()$ Singleton
+        +loadClass()$ void
+        +function() void
+        -Singleton()
+    }
+```
 
 单例类 Singleton 模板：后文中介绍具体实现方式仅给出 `Singleton#instance` 引用和 `Singleton#getInstance` 方法的内容，其他内容无变化。
 
@@ -86,28 +87,28 @@ public class Main {
 
 饿汉式具有线程安全和非 Lazy 初始化的特点，实现难度最简单。由于 JVM 的类加载是单线程的，且已加载过的类不会重复加载，所以饿汉式天生具有线程安全的特点。
 
-- 由于是类加载即初始化，单例引用可添加 `final` 修饰。
-  
-  ```java
-  public static final Singleton instance = new Singleton();
-  
-  //下面写法效果相同
-  /*
-  public static final Singleton instance;
-  
-  static {
-      instance = new Singleton();
-  }
-  */
-  ```
+-   由于是类加载即初始化，单例引用可添加 `final` 修饰。
 
-- 获取单例函数：
-  
-  ```java
-  public static Singleton getInstance() {
-      return instance;
-  }
-  ```
+    ```java
+    public static final Singleton instance = new Singleton();
+
+    //下面写法效果相同
+    /*
+    public static final Singleton instance;
+
+    static {
+        instance = new Singleton();
+    }
+    */
+    ```
+
+-   获取单例函数：
+
+    ```java
+    public static Singleton getInstance() {
+        return instance;
+    }
+    ```
 
 执行结果：
 
@@ -123,26 +124,26 @@ public class Main {
 
 双锁检查是经常出现于面试题中的实现方式，具有线程安全和 Lazy 初始化的特点。需要自行实现线程安全的单例初始化，且要避免指令重排序导致的安全问题，实现难度较高。
 
-- 为了避免指令重排序导致的线程安全问题需要给单例引用添加 `volatile` 修饰：
-  
-  ```java
-  private volatile static Singleton instance;
-  ```
+-   为了避免指令重排序导致的线程安全问题需要给单例引用添加 `volatile` 修饰：
 
-- 双锁检查式最难的部分就是在获取单例的函数中进行两次非 null 判断和加锁后再初始化的过程：
-  
-  ```java
-  public static Singleton getInstance() {
-      if (instance == null) {
-          synchronized (Singleton.class) {
-              if (instance == null) {
-                  instance = new Singleton();
-              }
-          }
-      }
-      return instance;
-  }
-  ```
+    ```java
+    private volatile static Singleton instance;
+    ```
+
+-   双锁检查式最难的部分就是在获取单例的函数中进行两次非 null 判断和加锁后再初始化的过程：
+
+    ```java
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+    ```
 
 执行结果：
 
@@ -158,8 +159,8 @@ public class Main {
 
 `volatile` 修饰的变量有可见性和禁止指令重排序优化两个特点：
 
-- 可见性：一个线程修改了 `volatile` 变量，其他线程立即可知。
-- 禁止指令重排序优化：处理器为了提高运算单元的利用率，会对指令进行乱序执行优化，处理器能够保证经过乱序的指令和原始顺序的指令执行结果一致。
+-   可见性：一个线程修改了 `volatile` 变量，其他线程立即可知。
+-   禁止指令重排序优化：处理器为了提高运算单元的利用率，会对指令进行乱序执行优化，处理器能够保证经过乱序的指令和原始顺序的指令执行结果一致。
 
 在多线程环境中，指令重排序优化可能导致访问共享数据出错。这也是双锁检查式单例的单例变量用 volatile 修饰的原因。
 
@@ -181,19 +182,20 @@ PUTSTATIC Singleton.instance : LSingleton;
 
 根据指令重排序的原则，三、四两步之间乱序执行不会影响结果，如果未加 `volatile` 修饰、发生了指令重排，且两个线程恰好按照如下步骤执行就会发生异常情况（字节码指令和处理器指令没有对应关系，所以这个例子并不是很严谨，但理解当前的上下文够用了）：
 
-{% mermaid sequenceDiagram %}
+```mermaid
+sequenceDiagram
     threadOne ->> threadOne : NEW Singleton
     threadOne ->> threadOne : DUP
     threadOne ->> Singleton.class : PUTSTATIC Singleton.instance : LSingleton;
 
     threadTwo ->> Singleton.class : 调用 getInstance() 函数
     Singleton.class ->> threadTwo : Singleton.instance 引用不为 null，返回引用值
-    
+
     threadTwo ->> threadTwo : 使用单例对象
     Note over threadTwo : 此时单例对象还未完全初始化，发生异常
-    
+
     threadOne ->> threadOne : INVOKESPECIAL
-{% endmermaid %}
+```
 
 而如果 `instance` 使用 `volatile` 修饰，在指令 `INVOKESPECIAL` 和 `PUTSTATIC` 之间就不会发生指令重排，确保了上述问题不会发生。另外请注意，Java 中双锁检查式方式实现的单例在 Java 5 之后才能完全保证可用，此前版本依然会出现问题。
 
@@ -201,21 +203,21 @@ PUTSTATIC Singleton.instance : LSingleton;
 
 静态内部类式也用到了 JVM 类加载器的特性，既保证线程安全的情况下实现了 Lazy 加载。
 
-- 添加一个静态内部类持有单例引用：
-  
-  ```java
-  private static class InstanceHolder {
-      private static final Singleton INSTANCE = new Singleton();
-  }
-  ```
+-   添加一个静态内部类持有单例引用：
 
-- 获取单例的函数调用时才会加载静态内部类，进而触发单实例的初始化：
-  
-  ```java
-  public static Singleton getInstance() {
-      return InstanceHolder.INSTANCE;
-  }
-  ```
+    ```java
+    private static class InstanceHolder {
+        private static final Singleton INSTANCE = new Singleton();
+    }
+    ```
+
+-   获取单例的函数调用时才会加载静态内部类，进而触发单实例的初始化：
+
+    ```java
+    public static Singleton getInstance() {
+        return InstanceHolder.INSTANCE;
+    }
+    ```
 
 执行效果与双锁检查式相同，不在赘述。
 
@@ -329,7 +331,7 @@ private Singleton() {
 ```
 15:17:36.834 - Singleton's instance instantiated
 15:17:36.836 - 1159114532
-15:17:36.836 - Exception: 
+15:17:36.836 - Exception:
 java.lang.reflect.InvocationTargetException: null
     at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[?:1.8.0_261]
     at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62) ~[?:1.8.0_261]

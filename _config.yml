@@ -14,7 +14,6 @@ timezone: ""
 # URL
 ## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
 url: https://cncsl.github.io/
-root: /
 permalink: :year/:month:day/:title/
 permalink_defaults:
 pretty_urls:
@@ -45,16 +44,18 @@ post_asset_folder: false
 relative_link: false
 future: true
 highlight:
-    enable: false
+    enable: true
     line_number: false
     auto_detect: false
     tab_replace: ""
     wrap: true
     hljs: false
+    exclude_languages:
+        - mermaid
 prismjs:
-    enable: true
+    enable: false
     preprocess: true
-    line_number: false
+    line_number: true
     tab_replace: ""
 
 # Home page setting

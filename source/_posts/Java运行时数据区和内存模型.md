@@ -13,19 +13,20 @@ tags: [JVM]
 
 《Java 虚拟机规范》定义中，由 JVM 管理的内存区域分为以下几个运行时数据区域：
 
-{% mermaid flowchart LR %}
-subgraph 运行时数据区
-    subgraph 线程私有
-        虚拟机栈
-        本地方法栈
-        程序计数器
+```mermaid
+flowchart LR
+    subgraph 运行时数据区
+        subgraph 线程私有
+            虚拟机栈
+            本地方法栈
+            程序计数器
+        end
+        subgraph 线程共享
+            方法区
+            javaHeap[Java 堆]
+        end
     end
-    subgraph 线程共享
-        方法区
-        javaHeap[Java 堆]
-    end
-end
-{% endmermaid %}
+```
 
 ## 程序计数器
 
@@ -39,8 +40,8 @@ end
 
 虚拟机栈可能发生两类异常情况：
 
-- `StackOverflowError`：线程请求的栈深度大于虚拟机允许的深度
-- `OutOfMemoryError`：如果 JVM 栈容量可以动态拓展，当需要拓展时 JVM 无法申请到足够的内存就会抛出该异常。而在 HotSpot 这种不允许动态拓展的虚拟机中，如果创建时就失败依然也会抛出该异常。
+-   `StackOverflowError`：线程请求的栈深度大于虚拟机允许的深度
+-   `OutOfMemoryError`：如果 JVM 栈容量可以动态拓展，当需要拓展时 JVM 无法申请到足够的内存就会抛出该异常。而在 HotSpot 这种不允许动态拓展的虚拟机中，如果创建时就失败依然也会抛出该异常。
 
 本地方法栈（Native Method Stack）与虚拟机栈基本类似，当执行本地方法时使用本地方法栈，同样会抛出 `StackOverflowError` 和 `OutOfMemoryError` 。
 
@@ -52,7 +53,7 @@ end
 
 Java 堆（Java Heap）在虚拟机启动时就创建，虚拟机关闭时销毁，被所有 Java 线程共享。用于存放所有的对象实例。
 
-Java 堆受垃圾回收器管理，由于现代主流的垃圾回收器都是基于分代收集理论设计，Java 堆中经常会出现*“新生代”、“老年代”、“永久代”、“Eden空间”、“From Survivor空间”、“To Survivor空间”* 等名词。这些名词对于 Java 堆的划分，是指一部分垃圾回收器的设计风格，而不是 JVM 具体实现的固有内存布局，更不是 《Java 虚拟机规范》里对 Java 堆的进一步细致划分。并且近年来新出现的垃圾回收器也有不采用分代设计的，再用这些名词划分 Java 堆空间也已经不正确了。
+Java 堆受垃圾回收器管理，由于现代主流的垃圾回收器都是基于分代收集理论设计，Java 堆中经常会出现*“新生代”、“老年代”、“永久代”、“Eden 空间”、“From Survivor 空间”、“To Survivor 空间”* 等名词。这些名词对于 Java 堆的划分，是指一部分垃圾回收器的设计风格，而不是 JVM 具体实现的固有内存布局，更不是 《Java 虚拟机规范》里对 Java 堆的进一步细致划分。并且近年来新出现的垃圾回收器也有不采用分代设计的，再用这些名词划分 Java 堆空间也已经不正确了。
 
 Java 堆可能发生 `OutOfMemoryError`异常：分配内存给新的对象实例失败、且堆无法再拓展时抛出该异常。
 
@@ -72,8 +73,8 @@ Java 堆的大小通过 `java` 命令的参数 `-Xmx` 和 `-Xms` 设定。
 
 JDK 8 及此后，HotSpot 提供了两个参数控制元空间的内存大小：
 
-- `-XX:MaxMetaspaceSize`：设置元空间最大值，默认值 -1 表示不限制。
-- `-XX:MetaspaceSize`：设置元空间初始大小，达到该值时收集器会自动调大（不超过 `-XX:MaxMetaspaceSize` 的前提下）、并触发一次能进行类型卸载的垃圾收集（例如 CMS 收集）。
+-   `-XX:MaxMetaspaceSize`：设置元空间最大值，默认值 -1 表示不限制。
+-   `-XX:MetaspaceSize`：设置元空间初始大小，达到该值时收集器会自动调大（不超过 `-XX:MaxMetaspaceSize` 的前提下）、并触发一次能进行类型卸载的垃圾收集（例如 CMS 收集）。
 
 # 直接内存
 
@@ -82,4 +83,3 @@ JDK 8 及此后，HotSpot 提供了两个参数控制元空间的内存大小：
 在 NIO 中有一种基于通道和缓冲区的 I/O 方式，可以通过 native 函数库直接分配堆外内存，然后通过一个存储在 Java 堆里面的 DirectByteBuffer 对象引用操作。因为避免了在 Java 堆和堆外内存中复制数据，能在一些场景中显著提高性能。
 
 直接内存的分配不会收到 Java 堆大小的限制，但总会收到本机总内存大小、处理器寻址空间的限制。例如在 32 位 Windows 操作系统中单个进程的内存上限为 2GB。
-

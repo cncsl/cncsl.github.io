@@ -11,21 +11,22 @@ tags: [Spring]
 
 # Spring 生命周期
 
-{% mermaid flowchart LR %}
-ClassLoad[类加载] --> Instantiation[实例化] --> Populate[属性填充] --> Initialization[初始化] --> Using[使用] --> Destruction[销毁]
-{% endmermaid %}
+```mermaid
+flowchart LR
+    ClassLoad[类加载] --> Instantiation[实例化] --> Populate[属性填充] --> Initialization[初始化] --> Using[使用] --> Destruction[销毁]
+```
 
 ## 拓展点的类型
 
 Spring 提供的拓展点可以分为：
 
-- 用于单个 bean 的**专用拓展点**：编写 bean 类时通过实现这些接口、重写其中的函数来实现拓展点。Spring 容器会在适当的时候调用这些接口中定义的函数。
-  - 诸多 Aware 接口的子接口
-  - `InitializingBean` 接口和 `DisposableBean` 接口
-- 用于所有普通 bean 初始化的**通用拓展点**：这些接口中定义了多个拓展点，使用时需要定义一个专门的类实现接口、重写必要的函数。Spring 容器初始化时会将这些类优先注册为 bean，待它们初始化完成之后再初始化普通的 bean。在其他每个普通 bean 注册时，Spring 容器都会尝试调用所有已注册的通用拓展点。
-  - `BeanPostProcessor`
-  - `InstantiationAwareBeanPostProcessor`
-  - `DestructionAwareBeanPostProcessor`
+-   用于单个 bean 的**专用拓展点**：编写 bean 类时通过实现这些接口、重写其中的函数来实现拓展点。Spring 容器会在适当的时候调用这些接口中定义的函数。
+    -   诸多 Aware 接口的子接口
+    -   `InitializingBean` 接口和 `DisposableBean` 接口
+-   用于所有普通 bean 初始化的**通用拓展点**：这些接口中定义了多个拓展点，使用时需要定义一个专门的类实现接口、重写必要的函数。Spring 容器初始化时会将这些类优先注册为 bean，待它们初始化完成之后再初始化普通的 bean。在其他每个普通 bean 注册时，Spring 容器都会尝试调用所有已注册的通用拓展点。
+    -   `BeanPostProcessor`
+    -   `InstantiationAwareBeanPostProcessor`
+    -   `DestructionAwareBeanPostProcessor`
 
 下方出现的图示中，菱形表示**通用拓展点**，而圆形表示**专用拓展点**，矩形就是 bean 的生命周期中的某一步骤。
 
@@ -37,12 +38,13 @@ Spring 提供的拓展点可以分为：
 2. 对象实例化
 3. `postProcessAfterInstantiation`：在普通 bean 对象实例化完成之后调用
 
-{% mermaid flowchart LR %}
-ClassLoad[类加载] --> postProcessBeforeInstantiation{实例化前拓展点}
-postProcessBeforeInstantiation --> Instantiation[对象实例化]
-Instantiation --> postProcessAfterInstantiation{实例化后拓展点}
-postProcessAfterInstantiation --> Populate[属性填充]
-{% endmermaid %}
+````mermaid
+flowchart LR
+    ClassLoad[类加载] --> postProcessBeforeInstantiation{实例化前拓展点}
+    postProcessBeforeInstantiation --> Instantiation[对象实例化]
+    Instantiation --> postProcessAfterInstantiation{实例化后拓展点}
+    postProcessAfterInstantiation --> Populate[属性填充]
+```
 
 ## 属性填充
 
@@ -60,11 +62,12 @@ postProcessAfterInstantiation --> Populate[属性填充]
 9. `ApplicationContextAware#setApplicationContext`（仅在 ApplicationContext 中有效）
 10.  `ServletContextAware#setServletContext`（仅在 WebApplicationContext 中有效）
 
-{% mermaid flowchart LR  %}
-Populate[属性填充] --> setBeanXXX((Bean 信息拓展点))
-setBeanXXX --> setInformation((外部信息拓展点))
-setInformation --> setContext((Context 拓展点)) --> Initialization[初始化]
-{% endmermaid %}
+```mermaid
+flowchart LR
+    Populate[属性填充] --> setBeanXXX((Bean 信息拓展点))
+    setBeanXXX --> setInformation((外部信息拓展点))
+    setInformation --> setContext((Context 拓展点)) --> Initialization[初始化]
+```
 
 上方图示中，笔者对拓展点进行了简单的分类以简化图示，第一至第三个拓展点用于感知与 Bean 自身相关的信息、称之为 Bean 信息拓展点，第四至第八个拓展点统称为外部信息拓展点，随后第九第十两个拓展点与 ApplicationContext 有关。
 
@@ -73,16 +76,17 @@ setInformation --> setContext((Context 拓展点)) --> Initialization[初始化]
 初始化是指通过 bean 在将要工作前进行的最后准备工作，通常是 `@Bean` 的`initMethod` 属性定义的函数执行的过程 。Spring 通过 `BeanPostProcessor` 接口在初始化之前和之后提供了两个通用拓展点，加上 `InitializingBean#afterPropertiesSet`  和初始化函数执行顺序为：
 
 1. `postProcessBeforeInitialization`
-2. `InitializingBean#afterPropertiesSet` 
+2. `InitializingBean#afterPropertiesSet`
 3. 自定义的初始化函数
 4. `postProcessAfterInitialization`
 
-{% mermaid flowchart LR  %}
-Populate[属性填充] --> postProcessBeforeInitialization{初始化前拓展点} --> afterPropertiesSet((InitializingBean#afterPropertiesSet))
-afterPropertiesSet --> Initialization[初始化]
-Initialization --> postProcessAfterInitialization{初始化后拓展点}
-postProcessAfterInitialization --> Using[使用中]
-{% endmermaid %}
+```mermaid
+flowchart LR
+    Populate[属性填充] --> postProcessBeforeInitialization{初始化前拓展点} --> afterPropertiesSet((InitializingBean#afterPropertiesSet))
+    afterPropertiesSet --> Initialization[初始化]
+    Initialization --> postProcessAfterInitialization{初始化后拓展点}
+    postProcessAfterInitialization --> Using[使用中]
+```
 
 
 
@@ -94,9 +98,10 @@ postProcessAfterInitialization --> Using[使用中]
 2. `DisposableBean#destroy`
 3. 自定义的销毁函数。
 
-{% mermaid flowchart LR %}
-postProcessBeforeDestruction{销毁前拓展点} -->  destroy((DisposableBean#destroy)) --> customDestroy[自定义的销毁函数]
-{% endmermaid %}
+```mermaid
+flowchart LR
+    postProcessBeforeDestruction{销毁前拓展点} -->  destroy((DisposableBean#destroy)) --> customDestroy[自定义的销毁函数]
+```
 
 ## 总结
 
@@ -104,21 +109,20 @@ Spring 提供的拓展点令人眼花缭乱，但仔细思考就会发现这些�
 
 - 通用拓展点可以对任意其他的类进行处理，且各个通用拓展点实际都来自于 `BeanPostProcessor`，本文中提到的三个拓展点类图如下（也就是说 `InstantiationAwareBeanPostProcessor` 接口的实现类如果实现了 `postProcessBeforeInitialization` 函数，其实也具备初始化前置拓展点的能力）。此外，实例化 *Instantiation* 和初始化 *Initialization* 这两个单词的拼写需要区分以下。
 
-  
-  {% mermaid classDiagram %}
+
+```mermaid
+classDiagram
   BeanPostProcessor <|-- InstantiationAwareBeanPostProcessor
   BeanPostProcessor <|-- DestructionAwareBeanPostProcessor
   BeanPostProcessor: +postProcessBeforeInitialization()
   BeanPostProcessor: +postProcessAfterInitialization()
-  
+
   InstantiationAwareBeanPostProcessor: +postProcessBeforeInstantiation()
   InstantiationAwareBeanPostProcessor: +postProcessAfterInstantiation()
-      
+
   DestructionAwareBeanPostProcessor: +postProcessBeforeDestruction()
-  {% endmermaid %}
-  
-  
-  
+```
+
 - 属性填充阶段的多个拓展点可以根据其用途进行分类便于记忆
 
 - *自定义的初始化方法和自定义的销毁方法可以认为是一对*，*`InitializingBean` 接口和 `DisposableBean` 接口可以认为是一对*，它们之间不应该交叉出现（例如通过自定义的初始化方法定义了初始化过程，却通过 `DispoableBean#destory` 执行销毁过程）。
@@ -234,7 +238,7 @@ public class SimpleBean
     }
 
 }
-```
+````
 
 EmptyBean 类
 
@@ -367,61 +371,61 @@ public class DemoApplication implements CommandLineRunner {
 
 日志格式定义：`logging.pattern.console=[%t] %c %M : %m %n`，下方是逐阶段的分析。
 
-0. SpringBoot 启动，初始化容器 
+0. SpringBoot 启动，初始化容器
 
 1. 优先加载 `BeanPostProcessor` 的实现类
 
-   ```text
-   [main] CustomInstantiationProcessor <init> : InstantiationAwareBeanPostProcessor 优先初始化 
-   [main] CustomInitializationProcessor <init> : BeanPostProcessor 优先初始化 
-   [main] CustomDestructionProcessor <init> : DestructionAwareBeanPostProcessor 优先初始化 
-   ```
+    ```text
+    [main] CustomInstantiationProcessor <init> : InstantiationAwareBeanPostProcessor 优先初始化
+    [main] CustomInitializationProcessor <init> : BeanPostProcessor 优先初始化
+    [main] CustomDestructionProcessor <init> : DestructionAwareBeanPostProcessor 优先初始化
+    ```
 
 2. 实例化阶段的日志
 
-   ```text
-   [main] CustomInstantiationProcessor postProcessBeforeInstantiation : simpleBean 即将实例化 
-   [main] SimpleBean <init> : 构造函数执行，创建实例 
-   [main] CustomInstantiationProcessor postProcessAfterInstantiation : simpleBean 实例化完成 
-   ```
+    ```text
+    [main] CustomInstantiationProcessor postProcessBeforeInstantiation : simpleBean 即将实例化
+    [main] SimpleBean <init> : 构造函数执行，创建实例
+    [main] CustomInstantiationProcessor postProcessAfterInstantiation : simpleBean 实例化完成
+    ```
 
 3. 属性填充阶段的日志
 
-   ```text
-   [main] SimpleBean setEmptyBean : setter 函数执行，装配了 cncsl.learn.blc.EmptyBean@2f67a4d3 
-   [main] SimpleBean setBeanName : bean 名称为 simpleBean 
-   [main] SimpleBean setBeanClassLoader : 类加载器是 org.springframework.boot.loader.LaunchedURLClassLoader@51565ec2 
-   [main] SimpleBean setBeanFactory : 由 class org.springframework.beans.factory.support.DefaultListableBeanFactory@797814020 创建 
-   [main] SimpleBean setEnvironment : 运行的 JVM 型号是 Java HotSpot(TM) 64-Bit Server VM 
-   [main] SimpleBean setEmbeddedValueResolver : 作者是 cncsl 
-   [main] SimpleBean setResourceLoader : 资源解析器对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
-   [main] SimpleBean setApplicationEventPublisher : 事件发布器对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
-   [main] SimpleBean setMessageSource : 消息源对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
-   [main] SimpleBean setApplicationContext : 应用程序上下文对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec 
-   ```
+    ```text
+    [main] SimpleBean setEmptyBean : setter 函数执行，装配了 cncsl.learn.blc.EmptyBean@2f67a4d3
+    [main] SimpleBean setBeanName : bean 名称为 simpleBean
+    [main] SimpleBean setBeanClassLoader : 类加载器是 org.springframework.boot.loader.LaunchedURLClassLoader@51565ec2
+    [main] SimpleBean setBeanFactory : 由 class org.springframework.beans.factory.support.DefaultListableBeanFactory@797814020 创建
+    [main] SimpleBean setEnvironment : 运行的 JVM 型号是 Java HotSpot(TM) 64-Bit Server VM
+    [main] SimpleBean setEmbeddedValueResolver : 作者是 cncsl
+    [main] SimpleBean setResourceLoader : 资源解析器对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
+    [main] SimpleBean setApplicationEventPublisher : 事件发布器对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
+    [main] SimpleBean setMessageSource : 消息源对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
+    [main] SimpleBean setApplicationContext : 应用程序上下文对象：org.springframework.context.annotation.AnnotationConfigApplicationContext@ba2f4ec
+    ```
 
 4. 初始化阶段
 
-   ```text
-   [main] CustomInitializationProcessor postProcessBeforeInitialization : simpleBean 即将初始化 
-   [main] SimpleBean initMethod : 自定义的初始化方法 
-   [main] SimpleBean afterPropertiesSet : 属性装配全部完成，校验无误，开始初始化 
-   [main] CustomInitializationProcessor postProcessAfterInitialization : simpleBean 初始化完成 
-   [main] cncsl.learn.blc.DemoApplication logStarted : Started DemoApplication in 0.817 seconds (JVM running for 1.219) 
-   [main] DemoApplication run : cncsl.learn.blc.SimpleBean@295cf707 使用 
-   ```
+    ```text
+    [main] CustomInitializationProcessor postProcessBeforeInitialization : simpleBean 即将初始化
+    [main] SimpleBean initMethod : 自定义的初始化方法
+    [main] SimpleBean afterPropertiesSet : 属性装配全部完成，校验无误，开始初始化
+    [main] CustomInitializationProcessor postProcessAfterInitialization : simpleBean 初始化完成
+    [main] cncsl.learn.blc.DemoApplication logStarted : Started DemoApplication in 0.817 seconds (JVM running for 1.219)
+    [main] DemoApplication run : cncsl.learn.blc.SimpleBean@295cf707 使用
+    ```
 
 5. 使用阶段
 
-   ```text
-   [main] cncsl.learn.blc.DemoApplication logStarted : Started DemoApplication in 1.135 seconds (JVM running for 2.028) 
-   [main] DemoApplication run : cncsl.learn.blc.SimpleBean@4a335fa8 使用 
-   ```
+    ```text
+    [main] cncsl.learn.blc.DemoApplication logStarted : Started DemoApplication in 1.135 seconds (JVM running for 2.028)
+    [main] DemoApplication run : cncsl.learn.blc.SimpleBean@4a335fa8 使用
+    ```
 
 6. 销毁阶段
 
-   ```text
-   [SpringContextShutdownHook] CustomDestructionProcessor postProcessBeforeDestruction : simpleBean 即将销毁 
-   [SpringContextShutdownHook] SimpleBean destroyMethod : 自定义的销毁方法 
-   [SpringContextShutdownHook] SimpleBean destroy : 容器即将关闭，销毁其中的 bean 
-   ```
+    ```text
+    [SpringContextShutdownHook] CustomDestructionProcessor postProcessBeforeDestruction : simpleBean 即将销毁
+    [SpringContextShutdownHook] SimpleBean destroyMethod : 自定义的销毁方法
+    [SpringContextShutdownHook] SimpleBean destroy : 容器即将关闭，销毁其中的 bean
+    ```
