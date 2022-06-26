@@ -25,7 +25,7 @@ Linux 系统中查找文件的命令有 `which`、`whereis`、`locate` 和 `find
     # 返回结果说明找不到 ll 命令
     $ /usr/bin/which ll
     /usr/bin/which: no ll in (/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)
-
+    
     # 直接输入 which 时实际效果为带有“默认参数”的
     # 返回结果说明 ll 是 ls -l 的别名，
     $ which ll

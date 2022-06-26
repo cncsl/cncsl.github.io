@@ -13,10 +13,10 @@ tags: [Java, 反射]
 
 先看下方类图（细节很多，后续讲到相关内容会提示返回来再看）：
 
--   Proxy 和 InvocationHandler 是 JDK 提供的类库
--   UserService 和 UserServiceImpl 是被代理的演示代码
--   BusinessInvocationHandler 是实现代理逻辑的演示代码
--   最终会生成动态代理类和动态代理实例。
+- Proxy 和 InvocationHandler 是 JDK 提供的类库
+- UserService 和 UserServiceImpl 是被代理的演示代码
+- BusinessInvocationHandler 是实现代理逻辑的演示代码
+- 最终会生成动态代理类和动态代理实例。
 
 ```mermaid
 classDiagram
@@ -44,8 +44,8 @@ classDiagram
     }
 
     class 动态代理类 {
-    		-UserService realImpl
-    		-InvocationHandler businessInvocationHandler
+        -UserService realImpl
+        -InvocationHandler businessInvocationHandler
         +login(String password, String username) void
     }
 
@@ -100,15 +100,15 @@ Class<?> getProxyClass(ClassLoader loader,Class<?>...interfaces)throws IllegalAr
 
 参数 loader 和 interfaces 必须满足以下要求：
 
--   interfaces 中的对象必须都是接口，不能是普通类或基本数据类型。
--   interfaces 中不能有重复的接口。
--   interfaces 中的所有接口对类加载器 loader 而言都是按名称可见的，用代码体现就是（interface 是参数 interfaces 中某个 Class 对象、loader
-    就是对应加载器）： `Class.forName(interface.getName(), false, loader) == interface` 。
--   interfaces 中所有的非 public 接口都必须在同一个包路径下，否则无法生成代理类。
--   如果 interfaces 中不同接口内定义了相同签名（函数名和形参列表一致）的方法：
-    -   只要有一个方法的返回值类型是 void 或基本数据类型，所有的方法都必须具备相同的返回类型。
-    -   其中一个方法的返回值类型必须是其他所有方法返回值类型的子类（或实现类）
--   动态代理类也受虚拟机限制，因此 interfaces 参数长度不能超过 65535。
+- interfaces 中的对象必须都是接口，不能是普通类或基本数据类型。
+- interfaces 中不能有重复的接口。
+- interfaces 中的所有接口对类加载器 loader 而言都是按名称可见的，用代码体现就是（interface 是参数 interfaces 中某个 Class 对象、loader
+  就是对应加载器）： `Class.forName(interface.getName(), false, loader) == interface` 。
+- interfaces 中所有的非 public 接口都必须在同一个包路径下，否则无法生成代理类。
+- 如果 interfaces 中不同接口内定义了相同签名（函数名和形参列表一致）的方法：
+  - 只要有一个方法的返回值类型是 void 或基本数据类型，所有的方法都必须具备相同的返回类型。
+  - 其中一个方法的返回值类型必须是其他所有方法返回值类型的子类（或实现类）
+- 动态代理类也受虚拟机限制，因此 interfaces 参数长度不能超过 65535。
 
 如果任意条件不满足，会抛出 `IllegalArgumentException` 异常。
 
@@ -116,53 +116,53 @@ Class<?> getProxyClass(ClassLoader loader,Class<?>...interfaces)throws IllegalAr
 
 所有的动态代理类都含有以下特点：
 
--   动态代理类继承 `java.lang.reflect.Proxy` ，自身都是 public、final、非 abstract 的。
+- 动态代理类继承 `java.lang.reflect.Proxy` ，自身都是 public、final、非 abstract 的。
 
--   动态代理类名都以 “$Proxy" 开头，如果 interfaces 中有一个非 public 的接口，生成的动态代理类在该接口的包路径下。
+- 动态代理类名都以 “$Proxy" 开头，如果 interfaces 中有一个非 public 的接口，生成的动态代理类在该接口的包路径下。
 
--   动态代理类以固定的顺序（interfaces 的顺序）实现所有接口，如果使用不同的顺序再次调用会生成另一个 Class 对象，使用相同的顺序再次调用会直接返回已有的 Class 对象，用代码体现就是：
+- 动态代理类以固定的顺序（interfaces 的顺序）实现所有接口，如果使用不同的顺序再次调用会生成另一个 Class 对象，使用相同的顺序再次调用会直接返回已有的 Class 对象，用代码体现就是：
+  
+  ```java
+  //interfaces 参数顺序的影响
+  Class<?> listSetProxy = Proxy.getProxyClass(ClassLoader.getPlatformClassLoader(), List.class, Set.class);
+  Class<?> setListProxy = Proxy.getProxyClass(ClassLoader.getPlatformClassLoader(), Set.class, List.class);
+  log.info("listSetProxy hashCode: {}", listSetProxy.hashCode());
+  log.info("setListProxy hashCode: {}", setListProxy.hashCode());
+  //两个测试都通过
+  assertNotEquals(listSetProxy, setListProxy);
+  assertEquals(listSetProxy, Proxy.getProxyClass(ClassLoader.getPlatformClassLoader(), List.class, Set.class));
+  ```
 
-    ```java
-    //interfaces 参数顺序的影响
-    Class<?> listSetProxy = Proxy.getProxyClass(ClassLoader.getPlatformClassLoader(), List.class, Set.class);
-    Class<?> setListProxy = Proxy.getProxyClass(ClassLoader.getPlatformClassLoader(), Set.class, List.class);
-    log.info("listSetProxy hashCode: {}", listSetProxy.hashCode());
-    log.info("setListProxy hashCode: {}", setListProxy.hashCode());
-    //两个测试都通过
-    assertNotEquals(listSetProxy, setListProxy);
-    assertEquals(listSetProxy, Proxy.getProxyClass(ClassLoader.getPlatformClassLoader(), List.class, Set.class));
-    ```
+- `Proxy#isProxyClass` 可用于检查指定的 Class 对象是否为动态代理。
 
--   `Proxy#isProxyClass` 可用于检查指定的 Class 对象是否为动态代理。
-
--   动态代理类的实例持由专门的调用处理器接口（InvocationHandler，下方详细介绍）实现组合而成，同时继承 Proxy 类，文章开头的类图也体现了这种关系。
+- 动态代理类的实例持由专门的调用处理器接口（InvocationHandler，下方详细介绍）实现组合而成，同时继承 Proxy 类，文章开头的类图也体现了这种关系。
 
 ## 创建实例
 
 上文已经提到动态代理类实例由调用处理器组合而成（Proxy 类的 protected 属性），创建实例时必须指定一个调用处理器接口的特定实现。有以下两种方式可以获取一个动态代理实例：
 
--   获取到对应的 Class 对象后，通过反射的手段创建实例（_升级到 Java 9 之后，Jigsaw 项目给动态代理创建实例的过程带来一点影响，`Proxy#getProxyClass` 已经标记为废弃。_）：
+- 获取到对应的 Class 对象后，通过反射的手段创建实例（_升级到 Java 9 之后，Jigsaw 项目给动态代理创建实例的过程带来一点影响，`Proxy#getProxyClass` 已经标记为废弃。_）：
+  
+  ```java
+  //实际使用中，多半是由 Spring 创建
+  UserService realImpl = new UserServiceImpl();
+  
+  Class<?> proxyClass = Proxy.getProxyClass(realImpl.getClass().getClassLoader(), realImpl.getClass().getInterfaces());
+  Constructor<?> constructor = proxyClass.getConstructor(InvocationHandler.class);
+  UserService instance = (UserService) constructor.newInstance(new BusinessInvocationHandler(realImpl));
+  ```
 
-    ```java
-    //实际使用中，多半是由 Spring 创建
-    UserService realImpl = new UserServiceImpl();
-
-    Class<?> proxyClass = Proxy.getProxyClass(realImpl.getClass().getClassLoader(), realImpl.getClass().getInterfaces());
-    Constructor<?> constructor = proxyClass.getConstructor(InvocationHandler.class);
-    UserService instance = (UserService) constructor.newInstance(new BusinessInvocationHandler(realImpl));
-    ```
-
--   如果没有提前获取到 Class 对象，可使用 `Proxy#newProxyInstance` 函数直接创建实例：
-
-    ```java
-    //实际使用中，多半是由 Spring 创建
-    UserService realImpl = new UserServiceImpl();
-
-    UserService instance = (UserService) Proxy.newProxyInstance(
-      realImpl.getClass().getClassLoader(), realImpl.getClass().getInterfaces(),
-      new BusinessInvocationHandler(realImpl)
-    );
-    ```
+- 如果没有提前获取到 Class 对象，可使用 `Proxy#newProxyInstance` 函数直接创建实例：
+  
+  ```java
+  //实际使用中，多半是由 Spring 创建
+  UserService realImpl = new UserServiceImpl();
+  
+  UserService instance = (UserService) Proxy.newProxyInstance(
+    realImpl.getClass().getClassLoader(), realImpl.getClass().getInterfaces(),
+    new BusinessInvocationHandler(realImpl)
+  );
+  ```
 
 # 调用处理器
 
@@ -174,13 +174,13 @@ public Object invoke(Object proxy, Method method, Object[]args) throws Throwable
 
 在动态代理实例上调用每个接口定义的函数时，实际都会调用 invoke 函数，将相关信息通过参数传递，具体表现如下：
 
--   参数 proxy 是动态代理实例自身。
--   参数 method 是定义在接口中、期望调用的函数，在 invoke 函数实现中可以自由选择是否真实调用（回顾一下 ER 图，动态代理类和 InvocationHandler 实现是组合关系，而 UserServiceImpl
-    是聚合关系）。
--   参数 args 是传递给 method 的实参，在 invoke 函数实现中可任意使用。
--   invoke 函数的返回值会返回给实际调用的函数。
--   invoke 函数内抛出的异常也会在实际调用的函数处抛出。
--   在动态代理实例上调用 `toString`, `hashCode` 和`equals` 同样也会传递给 invoke 函数，一般情况下会直接调用被代理实例的相关函数。
+- 参数 proxy 是动态代理实例自身。
+- 参数 method 是定义在接口中、期望调用的函数，在 invoke 函数实现中可以自由选择是否真实调用（回顾一下 ER 图，动态代理类和 InvocationHandler 实现是组合关系，而 UserServiceImpl
+  是聚合关系）。
+- 参数 args 是传递给 method 的实参，在 invoke 函数实现中可任意使用。
+- invoke 函数的返回值会返回给实际调用的函数。
+- invoke 函数内抛出的异常也会在实际调用的函数处抛出。
+- 在动态代理实例上调用 `toString`, `hashCode` 和`equals` 同样也会传递给 invoke 函数，一般情况下会直接调用被代理实例的相关函数。
 
 假设 BusinessInvocationHandler 实现如下：
 
@@ -205,7 +205,6 @@ public class BusinessInvocationHandler implements InvocationHandler {
     }
 
 }
-
 ```
 
 实际使用时代码如下：
@@ -228,8 +227,8 @@ UserService proxyService=(UserService)Proxy.newProxyInstance(
 
 在 JVM 启动参数中添加以下内容，JVM 会将生成的代理类字节码文件输出到类路径中：
 
--   Java 8 及更早版本：`-Dsun.misc.ProxyGenerator.saveGeneratedFiles=true`
--   Java 8 以上版本：`jdk.proxy.ProxyGenerator.saveGeneratedFiles=true`
+- Java 8 及更早版本：`-Dsun.misc.ProxyGenerator.saveGeneratedFiles=true`
+- Java 8 以上版本：`jdk.proxy.ProxyGenerator.saveGeneratedFiles=true`
 
 反编译字节码文件后得到下方源码，笔者添加了一些注释方便理解。
 

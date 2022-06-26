@@ -77,16 +77,16 @@ tags: [MyBatis, 后端开发框架学习]
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     <mapper namespace="pers.cncsl.ft.mybatis.mapper.CountryMapper">
-
+    
         <resultMap id="BaseResultMap" type="pers.cncsl.ft.mybatis.entity.Country">
             <id column="primary_code" jdbcType="VARCHAR" property="primaryCode"/>
             <result column="country_name" jdbcType="VARCHAR" property="countryName"/>
             <result column="capital" jdbcType="INTEGER" property="capital"/>
             <result column="secondary_code" jdbcType="VARCHAR" property="secondaryCode"/>
         </resultMap>
-
+    
         <!--其他 MyBatis 标签-->
-
+    
     </mapper>
     ```
 
