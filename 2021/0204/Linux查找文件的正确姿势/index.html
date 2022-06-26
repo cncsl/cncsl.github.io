@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.1.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
 
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32x32.jpg">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16x16.jpg">
@@ -16,10 +16,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.11.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="Linux 系统中查找文件的命令有 which、whereis、locate 和 find 等，本文对这四条命令进行简单的介绍、列举了一些简单的使用方式。">
 <meta property="og:type" content="article">
@@ -29,7 +29,7 @@
 <meta property="og:description" content="Linux 系统中查找文件的命令有 which、whereis、locate 和 find 等，本文对这四条命令进行简单的介绍、列举了一些简单的使用方式。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-02-04T21:40:38.000Z">
-<meta property="article:modified_time" content="2022-05-04T09:20:50.252Z">
+<meta property="article:modified_time" content="2022-06-26T11:59:45.954Z">
 <meta property="article:author" content="CnCSL">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -256,17 +256,7 @@
 <li><p><code>-all, -a</code> 默认情况下，<code>which</code> 命令会在匹配到第一个结果后结束运行，添加该参数可以让其搜索所有路径。</p>
 </li>
 <li><p><code>-read-alias, -i</code> 将输入视为别名搜索。Linux 系统中通常会使用 alias 设置诸多别名来简写命令，例如 Centos 中的 <code>ll</code> 实际是 <code>ls -l</code> ，而 <code>which</code> 是 <code>alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde</code>。</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell"># Centos
-# 以绝对路径调用 which，这样就不会受到 Centos 默认的几个参数影响
-# 返回结果说明找不到 ll 命令
-$ &#x2F;usr&#x2F;bin&#x2F;which ll
-&#x2F;usr&#x2F;bin&#x2F;which: no ll in (&#x2F;usr&#x2F;local&#x2F;sbin:&#x2F;usr&#x2F;local&#x2F;bin:&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;bin:&#x2F;root&#x2F;bin)
-
-# 直接输入 which 时实际效果为带有“默认参数”的
-# 返回结果说明 ll 是 ls -l 的别名，
-$ which ll
-alias ll&#x3D;&#39;ls -l --color&#x3D;auto&#39;
-        &#x2F;usr&#x2F;bin&#x2F;ls</code></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Centos</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以绝对路径调用 <span class="built_in">which</span>，这样就不会受到 Centos 默认的几个参数影响</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回结果说明找不到 ll 命令</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">/usr/bin/which ll</span></span><br><span class="line">/usr/bin/which: no ll in (/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">直接输入 <span class="built_in">which</span> 时实际效果为带有“默认参数”的</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回结果说明 ll 是 <span class="built_in">ls</span> -l 的别名，</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">which</span> ll</span></span><br><span class="line">alias ll=&#x27;ls -l --color=auto&#x27;</span><br><span class="line">        /usr/bin/ls</span><br></pre></td></tr></table></figure>
 
 <p><code>which ll</code> 相当于 <code>alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde ll</code>，返回结果第一行是 alias 输出的 <code>ll</code> 别名设置情况，第二行则是 <code>ls</code> 的实际位置。</p>
 </li>
@@ -278,8 +268,7 @@ alias ll&#x3D;&#39;ls -l --color&#x3D;auto&#39;
 <li><code>--show-tilde</code>：将用户家目录替换成 “<del>“ 符号输出。Linux 中 “</del>“ 符号是登录用户家目录的缩写，如果登录用户名为 cncsl，则 “~” 指 “&#x2F;home&#x2F;cncsl” 目录。当使用 root 账号登录时该参数无效。</li>
 </ul>
 <h1 id="whereis"><a href="#whereis" class="headerlink" title="whereis"></a>whereis</h1><p><strong>查找指定命令的可执行文件、源代码和手册的位置。</strong></p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">$ whereis vim
-vim: &#x2F;usr&#x2F;bin&#x2F;vim &#x2F;usr&#x2F;share&#x2F;vim &#x2F;usr&#x2F;share&#x2F;man&#x2F;man1&#x2F;vim.1.gz</code></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">whereis vim</span></span><br><span class="line">vim: /usr/bin/vim /usr/share/vim /usr/share/man/man1/vim.1.gz</span><br></pre></td></tr></table></figure>
 
 <p>可以看出，<code>vim</code> 的可执行程序位于 <code>/usr/bin/vim</code>，手册位于 <code>/usr/share/vim</code> 和 <code>/share/man/man1/vim.1.gz</code> 目录。</p>
 <ul>
@@ -287,21 +276,18 @@ vim: &#x2F;usr&#x2F;bin&#x2F;vim &#x2F;usr&#x2F;share&#x2F;vim &#x2F;usr&#x2F;sh
 </li>
 <li><p><code>-B</code>、<code>-M</code>和 <code>-S</code> 命令用于指定查询路径。</p>
 </li>
-<li><p><code>-u</code> 参数的描述直译为 <em>仅查询有异常情况的命令</em>。所谓的异常情况是指，某个命令的相关类型文件不止恰好一份（一份都没有或多于一份）。例如：</p>
+<li><p><code>-u</code> 参数的描述直译为 _仅查询有异常情况的命令_。所谓的异常情况是指，某个命令的相关类型文件不止恰好一份（一份都没有或多于一份）。例如：</p>
 <ul>
 <li><p><code>ls</code> 命令具有两份手册：</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">$ whereis -m -u ls
-ls: &#x2F;usr&#x2F;share&#x2F;man&#x2F;man1&#x2F;ls.1.gz &#x2F;usr&#x2F;share&#x2F;man&#x2F;man1p&#x2F;ls.1p.gz</code></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">whereis -m -u <span class="built_in">ls</span></span></span><br><span class="line">ls: /usr/share/man/man1/ls.1.gz /usr/share/man/man1p/ls.1p.gz</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>Linux 系统中有很多个与 python 相关的可执行文件：</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">$ whereis -b -u python
-python: &#x2F;usr&#x2F;bin&#x2F;python &#x2F;usr&#x2F;bin&#x2F;python2.7 &#x2F;usr&#x2F;lib&#x2F;python2.7 &#x2F;usr&#x2F;lib64&#x2F;python2.7 &#x2F;etc&#x2F;python &#x2F;usr&#x2F;include&#x2F;python2.7</code></pre></li>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">whereis -b -u python</span></span><br><span class="line">python: /usr/bin/python /usr/bin/python2.7 /usr/lib/python2.7 /usr/lib64/python2.7 /etc/python /usr/include/python2.7</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 </ul>
-<h1 id="locate"><a href="#locate" class="headerlink" title="locate"></a>locate</h1><p><strong>在文档和目录名称的数据库中查找指定文件。</strong>Linux 系统会定期自动扫描磁盘来维护一个记录磁盘数据的数据库，而 <code>locate</code> 命令使用的数据库是 <em>&#x2F;var&#x2F;lib&#x2F;mlocate&#x2F;mlocate.db</em>。</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">$ ls -hl &#x2F;var&#x2F;lib&#x2F;mlocate&#x2F;mlocate.db
--rw-r-----. 1 root slocate 2.7M Feb  4 03:42 &#x2F;var&#x2F;lib&#x2F;mlocate&#x2F;mlocate.db</code></pre>
+<h1 id="locate"><a href="#locate" class="headerlink" title="locate"></a>locate</h1><p><strong>在文档和目录名称的数据库中查找指定文件。</strong>Linux 系统会定期自动扫描磁盘来维护一个记录磁盘数据的数据库，而 <code>locate</code> 命令使用的数据库是 _&#x2F;var&#x2F;lib&#x2F;mlocate&#x2F;mlocate.db_。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">ls</span> -hl /var/lib/mlocate/mlocate.db</span></span><br><span class="line">-rw-r-----. 1 root slocate 2.7M Feb  4 03:42 /var/lib/mlocate/mlocate.db</span><br></pre></td></tr></table></figure>
 
 <p>可以看出当前 <em>mlocate.db</em> 文件共记录了 2.7M 的数据。</p>
 <ul>
@@ -310,35 +296,25 @@ python: &#x2F;usr&#x2F;bin&#x2F;python &#x2F;usr&#x2F;bin&#x2F;python2.7 &#x2F;u
 <li><code>--limit, -l, -n LIMIT</code>：限定输出的文件数量为 LIMIT</li>
 <li><code>--regexp,-r REGEXP</code>：使用 REGEXP 指定的正则表达式匹配。</li>
 </ul>
-<pre class="language-shell" data-language="shell"><code class="language-shell"># 统计有多少PNG格式的图像文件
-$ locate -c png
-
-# 统计有多少 readme 文件（根据编写者的习惯，readme 文件可能名为 README、ReadMe等）
-$ locate -c -i readme
-
-# 输出十个 .gz 归档文件的路径
-$ locate -l 10 *.gz
-
-# 查看 tomcat 2021年1月的日志
-$ locate -r tomcat.2021-01-[0-3][0-9].log</code></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">统计有多少PNG格式的图像文件</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">locate -c png</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">统计有多少 readme 文件（根据编写者的习惯，readme 文件可能名为 README、ReadMe等）</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">locate -c -i readme</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输出十个 .gz 归档文件的路径</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">locate -l 10 *.gz</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 tomcat 2021年1月的日志</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">locate -r tomcat.2021-01-[0-3][0-9].<span class="built_in">log</span></span></span><br></pre></td></tr></table></figure>
 
 <p>由于 <code>locate</code> 命令是从数据库查找文件，新创建的文件可能由于未被记录到数据库中而无法查询到，这种时候需要使用 <code>updatedb</code> 命令手动更新数据库。</p>
 <h1 id="find"><a href="#find" class="headerlink" title="find"></a>find</h1><p><strong>在一个目录层级中查找文件。</strong></p>
 <p><code>find</code> 命令功能强大，可根据多种条件查询文件，随后进行自定义的操作，格式如下：</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">find [path...] [expression]</code></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find [path...] [expression]</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li><p>查询当前目录下所有的 markdown 文档：</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">$ find . -name &quot;*.log&quot;</code></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">find . -name <span class="string">&quot;*.log&quot;</span></span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>查询用户视频文件夹中大于 100M 的文件：</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">$ find ~&#x2F;Videos&#x2F; -size +100M</code></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">find ~/Videos/ -size +100M</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>查询用户音乐文件夹中过去七天访问过的文件：</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">$ find ~&#x2F;Music&#x2F; -atime -7</code></pre>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">find ~/Music/ -atime -7</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>查询系统中、三个月之前创建的、一个月之内没有访问过、大于 30M 的日志文件，并删除：</p>
-<pre class="language-shell" data-language="shell"><code class="language-shell">find &#x2F; -ctime +90 -atime +30 -size +1M -name &quot;*.log&quot; -delete</code></pre></li>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find / -ctime +90 -atime +30 -size +1M -name &quot;*.log&quot; -delete</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p><code>find</code> 会实际的扫描磁盘，所以速度会明显小于前三个。</p>
 
@@ -415,13 +391,13 @@ $ locate -r tomcat.2021-01-[0-3][0-9].log</code></pre>
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
 <script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js","integrity":"sha256-7wT34TI0pEBeEFoi4z+vhuSddGh6vUTMWdqJ2SDe2jg="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.1/mermaid.min.js","integrity":"sha256-8L3O8tirFUa8Va4NSTAyIbHJeLd6OnlcxgupV9F77e0="}}</script>
   <script src="/js/third-party/tags/mermaid.js"></script>
 
 

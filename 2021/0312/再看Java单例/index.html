@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.1.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
 
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32x32.jpg">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16x16.jpg">
@@ -16,10 +16,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.11.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="此前面试遇到了单例问题，本以为已经背的滚瓜烂熟，没想到被问单例如何避免被反射和序列化破坏，虽然后来还是等到了通知，但还是复习一下单例的实现方式，并学习防止反射和序列化破坏的手段。">
 <meta property="og:type" content="article">
@@ -29,7 +29,7 @@
 <meta property="og:description" content="此前面试遇到了单例问题，本以为已经背的滚瓜烂熟，没想到被问单例如何避免被反射和序列化破坏，虽然后来还是等到了通知，但还是复习一下单例的实现方式，并学习防止反射和序列化破坏的手段。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-12T21:54:46.000Z">
-<meta property="article:modified_time" content="2022-05-04T09:20:50.252Z">
+<meta property="article:modified_time" content="2022-06-26T11:59:45.954Z">
 <meta property="article:author" content="CnCSL">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="设计模式">
@@ -252,116 +252,44 @@
 <span id="more"></span>
 
 <h1 id="基本实现方式"><a href="#基本实现方式" class="headerlink" title="基本实现方式"></a>基本实现方式</h1><p>其他相关资料中，最多的能数出八种单例实现方式，而实际上其中有些实现并不具备实际意义，在文中出现也仅是为了指出存在的问题便于引出下文。本文仅介绍有实际意义的单例实现模式。为了缩减篇幅，先给出一个后续出现代码的模板的类图：</p>
-<pre class="mermaid">
-classDiagram
-class Singleton {
-  -Logger log$
-  -Singleton instance$
-  +getInstance()$ Singleton
-  +loadClass()$ void
-  +function() void
-  -Singleton()
-}
-</pre>
+<pre><code class="highlight mermaid">classDiagram
+    class Singleton &#123;
+        -Logger log$
+        -Singleton instance$
+        +getInstance()$ Singleton
+        +loadClass()$ void
+        +function() void
+        -Singleton()
+    &#125;</code></pre>
 
 <p>单例类 Singleton 模板：后文中介绍具体实现方式仅给出 <code>Singleton#instance</code> 引用和 <code>Singleton#getInstance</code> 方法的内容，其他内容无变化。</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Singleton</span> <span class="token punctuation">&#123;</span>
-
-    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">Logger</span> log <span class="token operator">=</span> <span class="token class-name">LogManager</span><span class="token punctuation">.</span><span class="token function">getLogger</span><span class="token punctuation">(</span><span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment">//单例引用，不同实现方式有所不同</span>
-    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">Singleton</span> instance<span class="token punctuation">;</span>
-
-    <span class="token comment">/**
-     * 获取单例的函数，不同实现方式有所不同
-     *
-     * @return 单例
-     */</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Singleton</span> <span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token comment">//some code</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token comment">/**
-     * 静态方法，用于触发虚拟机类加载，仅有一行日志用于观察类加载时间
-     */</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"&#123;&#125; loaded"</span><span class="token punctuation">,</span> <span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token comment">/**
-     * 单例类的功能函数，仅有一行日志
-     */</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Singleton's instance using"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token comment">/**
-     * 私有的构造函数，仅有一行日志用于观察构造时间
-     */</span>
-    <span class="token keyword">private</span> <span class="token class-name">Singleton</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Singleton's instance instantiated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">log</span> <span class="operator">=</span> LogManager.getLogger(Singleton.class);</span><br><span class="line">    <span class="comment">//单例引用，不同实现方式有所不同</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取单例的函数，不同实现方式有所不同</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 单例</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//some code</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 静态方法，用于触发虚拟机类加载，仅有一行日志用于观察类加载时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">load</span><span class="params">()</span> &#123;</span><br><span class="line">        log.debug(<span class="string">&quot;&#123;&#125; loaded&quot;</span>, Singleton.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 单例类的功能函数，仅有一行日志</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">function</span><span class="params">()</span> &#123;</span><br><span class="line">        log.debug(<span class="string">&quot;Singleton&#x27;s instance using&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有的构造函数，仅有一行日志用于观察构造时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;</span><br><span class="line">        log.debug(<span class="string">&quot;Singleton&#x27;s instance instantiated&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>调用单例类的 Main 类：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> <span class="token punctuation">&#123;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span><span class="token punctuation">&#123;</span>
-        <span class="token comment">//先触发类加载</span>
-        <span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment">//等待一定时间</span>
-        <span class="token class-name">TimeUnit</span><span class="token punctuation">.</span>SECONDS<span class="token punctuation">.</span><span class="token function">sleep</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment">//执行单例的功能函数</span>
-        <span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-<span class="token punctuation">&#125;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="comment">//先触发类加载</span></span><br><span class="line">        Singleton.load();</span><br><span class="line">        <span class="comment">//等待一定时间</span></span><br><span class="line">        TimeUnit.SECONDS.sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="comment">//执行单例的功能函数</span></span><br><span class="line">        Singleton.getInstance().function();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h2><p>饿汉式具有线程安全和非 Lazy 初始化的特点，实现难度最简单。由于 JVM 的类加载是单线程的，且已加载过的类不会重复加载，所以饿汉式天生具有线程安全的特点。</p>
 <ul>
 <li><p>由于是类加载即初始化，单例引用可添加 <code>final</code> 修饰。</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">Singleton</span> instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Singleton</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-<span class="token comment">//下面写法效果相同</span>
-<span class="token comment">/*
-public static final Singleton instance;
-
-static &#123;
-    instance = new Singleton();
-&#125;
-*/</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Singleton</span> <span class="variable">instance</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//下面写法效果相同</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">public static final Singleton instance;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">static &#123;</span></span><br><span class="line"><span class="comment">    instance = new Singleton();</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>获取单例函数：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Singleton</span> <span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">return</span> instance<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre></li>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p>执行结果：</p>
-<pre class="language-none"><code class="language-none">13:19:32.565 - Singleton&#39;s instance instantiated
-13:19:32.569 - class cncsl.github.io.Singleton loaded
-13:19:35.572 - Singleton&#39;s instance using</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">13:19:32.565 - Singleton&#x27;s instance instantiated</span><br><span class="line">13:19:32.569 - class cncsl.github.io.Singleton loaded</span><br><span class="line">13:19:35.572 - Singleton&#x27;s instance using</span><br></pre></td></tr></table></figure>
 
 <p>从日志可以看出，单例类刚加载时就调用构造函数完成了单实例的初始化。</p>
 <h2 id="双锁检查式"><a href="#双锁检查式" class="headerlink" title="双锁检查式"></a>双锁检查式</h2><p>双锁检查是经常出现于面试题中的实现方式，具有线程安全和 Lazy 初始化的特点。需要自行实现线程安全的单例初始化，且要避免指令重排序导致的安全问题，实现难度较高。</p>
 <ul>
 <li><p>为了避免指令重排序导致的线程安全问题需要给单例引用添加 <code>volatile</code> 修饰：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">volatile</span> <span class="token keyword">static</span> <span class="token class-name">Singleton</span> instance<span class="token punctuation">;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton instance;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>双锁检查式最难的部分就是在获取单例的函数中进行两次非 null 判断和加锁后再初始化的过程：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Singleton</span> <span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>instance <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">synchronized</span> <span class="token punctuation">(</span><span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>instance <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-                instance <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Singleton</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">&#125;</span>
-        <span class="token punctuation">&#125;</span>
-    <span class="token punctuation">&#125;</span>
-    <span class="token keyword">return</span> instance<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre></li>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p>执行结果：</p>
-<pre class="language-none"><code class="language-none">13:30:07.524 - class cncsl.github.io.Singleton loaded
-13:30:10.541 - Singleton&#39;s instance instantiated
-13:30:10.541 - Singleton&#39;s instance using</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">13:30:07.524 - class cncsl.github.io.Singleton loaded</span><br><span class="line">13:30:10.541 - Singleton&#x27;s instance instantiated</span><br><span class="line">13:30:10.541 - Singleton&#x27;s instance using</span><br></pre></td></tr></table></figure>
 
 <p>从日志可以看出，类加载之后并没有立即初始化，实际需要调用到单例的功能函数前才进行了初始化。</p>
 <h3 id="volatile-关键字的作用"><a href="#volatile-关键字的作用" class="headerlink" title="volatile 关键字的作用"></a>volatile 关键字的作用</h3><p><code>volatile</code> 修饰的变量有可见性和禁止指令重排序优化两个特点：</p>
@@ -371,10 +299,7 @@ static &#123;
 </ul>
 <p>在多线程环境中，指令重排序优化可能导致访问共享数据出错。这也是双锁检查式单例的单例变量用 volatile 修饰的原因。</p>
 <p>Java 源码中 <code>instance = new Singleton();</code> 一句对应的字节码指令为：</p>
-<pre class="language-none"><code class="language-none">NEW Singleton
-DUP
-INVOKESPECIAL Singleton.&lt;init&gt; ()V
-PUTSTATIC Singleton.instance : LSingleton;</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">NEW Singleton</span><br><span class="line">DUP</span><br><span class="line">INVOKESPECIAL Singleton.&lt;init&gt; ()V</span><br><span class="line">PUTSTATIC Singleton.instance : LSingleton;</span><br></pre></td></tr></table></figure>
 
 <p>总共分为四个步骤：</p>
 <ol>
@@ -384,164 +309,65 @@ PUTSTATIC Singleton.instance : LSingleton;</code></pre>
 <li><code>PUTSTATIC</code> 指令将操作数栈顶的对象引用赋值给 Singleton 类的 instance 引用。</li>
 </ol>
 <p>根据指令重排序的原则，三、四两步之间乱序执行不会影响结果，如果未加 <code>volatile</code> 修饰、发生了指令重排，且两个线程恰好按照如下步骤执行就会发生异常情况（字节码指令和处理器指令没有对应关系，所以这个例子并不是很严谨，但理解当前的上下文够用了）：</p>
-<pre class="mermaid">
-sequenceDiagram
-threadOne -&gt;&gt; threadOne : NEW Singleton
-threadOne -&gt;&gt; threadOne : DUP
-threadOne -&gt;&gt; Singleton.class : PUTSTATIC Singleton.instance : LSingleton;
+<pre><code class="highlight mermaid">sequenceDiagram
+    threadOne -&gt;&gt; threadOne : NEW Singleton
+    threadOne -&gt;&gt; threadOne : DUP
+    threadOne -&gt;&gt; Singleton.class : PUTSTATIC Singleton.instance : LSingleton;
 
-threadTwo -&gt;&gt; Singleton.class : 调用 getInstance() 函数
-Singleton.class -&gt;&gt; threadTwo : Singleton.instance 引用不为 null，返回引用值
+    threadTwo -&gt;&gt; Singleton.class : 调用 getInstance() 函数
+    Singleton.class -&gt;&gt; threadTwo : Singleton.instance 引用不为 null，返回引用值
 
-threadTwo -&gt;&gt; threadTwo : 使用单例对象
-Note over threadTwo : 此时单例对象还未完全初始化，发生异常
+    threadTwo -&gt;&gt; threadTwo : 使用单例对象
+    Note over threadTwo : 此时单例对象还未完全初始化，发生异常
 
-threadOne -&gt;&gt; threadOne : INVOKESPECIAL
-</pre>
+    threadOne -&gt;&gt; threadOne : INVOKESPECIAL</code></pre>
 
 <p>而如果 <code>instance</code> 使用 <code>volatile</code> 修饰，在指令 <code>INVOKESPECIAL</code> 和 <code>PUTSTATIC</code> 之间就不会发生指令重排，确保了上述问题不会发生。另外请注意，Java 中双锁检查式方式实现的单例在 Java 5 之后才能完全保证可用，此前版本依然会出现问题。</p>
 <h2 id="静态内部类式"><a href="#静态内部类式" class="headerlink" title="静态内部类式"></a>静态内部类式</h2><p>静态内部类式也用到了 JVM 类加载器的特性，既保证线程安全的情况下实现了 Lazy 加载。</p>
 <ul>
 <li><p>添加一个静态内部类持有单例引用：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">InstanceHolder</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">Singleton</span> INSTANCE <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Singleton</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">InstanceHolder</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Singleton</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>获取单例的函数调用时才会加载静态内部类，进而触发单实例的初始化：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Singleton</span> <span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">return</span> <span class="token class-name">InstanceHolder</span><span class="token punctuation">.</span>INSTANCE<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre></li>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> InstanceHolder.INSTANCE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p>执行效果与双锁检查式相同，不在赘述。</p>
 <h2 id="枚举式"><a href="#枚举式" class="headerlink" title="枚举式"></a>枚举式</h2><p>枚举式的实现是将单例类写成一个枚举，枚举值仅包含一个单例引用，再加上与业务逻辑相关的功能函数即可。由于枚举的特点，这种实现方式具有线程安全、非 Lazy 加载和防止反射、序列化破坏单例等特点。</p>
 <p>由于改动较大附上全部代码：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">enum</span> <span class="token class-name">Singleton</span> <span class="token punctuation">&#123;</span>
-
-    <span class="token comment">/**
-     * 单例枚举值
-     */</span>
-    INSTANCE<span class="token punctuation">;</span>
-
-    <span class="token comment">/**
-     * 获取单例的函数
-     */</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Singleton</span> <span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">return</span> INSTANCE<span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token comment">/**
-     * 静态方法，用于触发虚拟机类加载，仅有一行日志用于观察类加载时间
-     */</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%s - %s loaded%n"</span><span class="token punctuation">,</span> <span class="token class-name">LocalTime</span><span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token comment">/**
-     * 单例类的功能函数，仅有一行日志
-     */</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%s - Singleton's instance using%n"</span><span class="token punctuation">,</span> <span class="token class-name">LocalTime</span><span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-
-    <span class="token comment">/**
-     * 私有的构造函数，仅有一行日志用于观察构造时间
-     */</span>
-    <span class="token class-name">Singleton</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%s - Singleton's instance instantiated%n"</span><span class="token punctuation">,</span> <span class="token class-name">LocalTime</span><span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 单例枚举值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取单例的函数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 静态方法，用于触发虚拟机类加载，仅有一行日志用于观察类加载时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">load</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.printf(<span class="string">&quot;%s - %s loaded%n&quot;</span>, LocalTime.now().toString(), Singleton.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 单例类的功能函数，仅有一行日志</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">function</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.printf(<span class="string">&quot;%s - Singleton&#x27;s instance using%n&quot;</span>, LocalTime.now().toString());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有的构造函数，仅有一行日志用于观察构造时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Singleton() &#123;</span><br><span class="line">        System.out.printf(<span class="string">&quot;%s - Singleton&#x27;s instance instantiated%n&quot;</span>, LocalTime.now().toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>执行结果：</p>
-<pre class="language-none"><code class="language-none">13:57:27.142 - Singleton&#39;s instance instantiated
-13:57:27.154 - class cncsl.github.io.Singleton loaded
-13:57:30.156 - Singleton&#39;s instance using</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">13:57:27.142 - Singleton&#x27;s instance instantiated</span><br><span class="line">13:57:27.154 - class cncsl.github.io.Singleton loaded</span><br><span class="line">13:57:30.156 - Singleton&#x27;s instance using</span><br></pre></td></tr></table></figure>
 
 <p>可以看出，枚举类加载之后立即初始化了单例对象，而三秒后执行了单例类的功能函数。</p>
 <h1 id="防反射和序列化破坏单例"><a href="#防反射和序列化破坏单例" class="headerlink" title="防反射和序列化破坏单例"></a>防反射和序列化破坏单例</h1><p>在 Java 中，通过序列化也能创建新的对象实例，而反射能突破构造函数 <code>private</code> 的限制，下面介绍一下如何避免这些情况的发生。枚举式单例天生避免了这些问题，下方内容都是针对其他三种实现方式而言的。</p>
 <p>另外，请明白一个前提，设计模式是一种设计的方式，既不是某种语言的语法约束，除了枚举方式以外、其他实现方式在有人恶意破坏的情况都无法完全确保单例。在这种情况下，需要考虑的不是如何改进现有的设计，而是找出企图通过这些手段破坏单例的人。所以下面的知识一般用于面试：当遇到如何确保单例的问题时，首先说枚举式设计方式、然后才是下面的内容。</p>
 <h2 id="反射手段"><a href="#反射手段" class="headerlink" title="反射手段"></a>反射手段</h2><p>下方是通过反射方式破坏单例的过程：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
-        <span class="token comment">//通过getInstance()获取</span>
-        <span class="token class-name">Singleton</span> one <span class="token operator">=</span> <span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span>one<span class="token punctuation">.</span><span class="token function">hashCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment">//反射调用构造函数</span>
-        <span class="token class-name">Constructor</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Singleton</span><span class="token punctuation">></span></span> constructor <span class="token operator">=</span> <span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">getDeclaredConstructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        constructor<span class="token punctuation">.</span><span class="token function">setAccessible</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token class-name">Singleton</span> two <span class="token operator">=</span> constructor<span class="token punctuation">.</span><span class="token function">newInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span>two<span class="token punctuation">.</span><span class="token function">hashCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span>one <span class="token operator">==</span> two<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        log<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span><span class="token string">"Exception: "</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//通过getInstance()获取</span></span><br><span class="line">        <span class="type">Singleton</span> <span class="variable">one</span> <span class="operator">=</span> Singleton.getInstance();</span><br><span class="line">        log.debug(one.hashCode());</span><br><span class="line">        <span class="comment">//反射调用构造函数</span></span><br><span class="line">        Constructor&lt;Singleton&gt; constructor = Singleton.class.getDeclaredConstructor();</span><br><span class="line">        constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">Singleton</span> <span class="variable">two</span> <span class="operator">=</span> constructor.newInstance();</span><br><span class="line">        log.debug(two.hashCode());</span><br><span class="line">        log.debug(one == two);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;Exception: &quot;</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>执行结果：</p>
-<pre class="language-none"><code class="language-none">15:10:48.237 - Singleton&#39;s instance instantiated
-15:10:48.240 - 1159114532
-15:10:48.240 - Singleton&#39;s instance instantiated
-15:10:48.240 - 1832580921
-15:10:48.240 - false</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">15:10:48.237 - Singleton&#x27;s instance instantiated</span><br><span class="line">15:10:48.240 - 1159114532</span><br><span class="line">15:10:48.240 - Singleton&#x27;s instance instantiated</span><br><span class="line">15:10:48.240 - 1832580921</span><br><span class="line">15:10:48.240 - false</span><br></pre></td></tr></table></figure>
 
 <p>可以看出目前程序中以存在两个 Singleton 类的实例，单例已经被破坏。</p>
 <p>解决方案为在单例类的构造函数中进行检查，如果单例引用不为 null 就抛出异常：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token class-name">Singleton</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>instance <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">UnsupportedOperationException</span><span class="token punctuation">(</span><span class="token string">"不允许重复创建实例"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-    log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Singleton's instance instantiated"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (instance != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;不允许重复创建实例&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log.debug(<span class="string">&quot;Singleton&#x27;s instance instantiated&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>再次执行结果：</p>
-<pre class="language-none"><code class="language-none">15:17:36.834 - Singleton&#39;s instance instantiated
-15:17:36.836 - 1159114532
-15:17:36.836 - Exception: 
-java.lang.reflect.InvocationTargetException: null
-    at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[?:1.8.0_261]
-    at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62) ~[?:1.8.0_261]
-    at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45) ~[?:1.8.0_261]
-    at java.lang.reflect.Constructor.newInstance(Constructor.java:423) ~[?:1.8.0_261]
-    at cncsl.github.io.Main.main(Main.java:18) [classes&#x2F;:?]
-Caused by: java.lang.UnsupportedOperationException: 不允许重复创建实例
-    at cncsl.github.io.Singleton.&lt;init&gt;(Singleton.java:32) ~[classes&#x2F;:?]
-    ... 5 more</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">15:17:36.834 - Singleton&#x27;s instance instantiated</span><br><span class="line">15:17:36.836 - 1159114532</span><br><span class="line">15:17:36.836 - Exception:</span><br><span class="line">java.lang.reflect.InvocationTargetException: null</span><br><span class="line">    at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[?:1.8.0_261]</span><br><span class="line">    at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62) ~[?:1.8.0_261]</span><br><span class="line">    at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45) ~[?:1.8.0_261]</span><br><span class="line">    at java.lang.reflect.Constructor.newInstance(Constructor.java:423) ~[?:1.8.0_261]</span><br><span class="line">    at cncsl.github.io.Main.main(Main.java:18) [classes/:?]</span><br><span class="line">Caused by: java.lang.UnsupportedOperationException: 不允许重复创建实例</span><br><span class="line">    at cncsl.github.io.Singleton.&lt;init&gt;(Singleton.java:32) ~[classes/:?]</span><br><span class="line">    ... 5 more</span><br></pre></td></tr></table></figure>
 
 <p>当然，攻击者可以在外部先记录一份 <code>instance</code> 引用，通过反射修改 <code>instance</code> 引用后再创建对象，这样程序中会存在两个 <code>Singleton</code> 实例。</p>
 <h2 id="序列化手段"><a href="#序列化手段" class="headerlink" title="序列化手段"></a>序列化手段</h2><p>下方是通过序列化手段破坏单例的过程：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">try</span> <span class="token punctuation">(</span><span class="token class-name">ObjectOutputStream</span> output <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ObjectOutputStream</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">FileOutputStream</span><span class="token punctuation">(</span><span class="token string">"Singleton.temp"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-         <span class="token class-name">ObjectInputStream</span> input <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ObjectInputStream</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">FileInputStream</span><span class="token punctuation">(</span><span class="token string">"Singleton.temp"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-
-        <span class="token class-name">Singleton</span> one <span class="token operator">=</span> <span class="token class-name">Singleton</span><span class="token punctuation">.</span><span class="token function">getInstance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span>one<span class="token punctuation">.</span><span class="token function">hashCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-        output<span class="token punctuation">.</span><span class="token function">writeObject</span><span class="token punctuation">(</span>one<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token class-name">Singleton</span> two <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Singleton</span><span class="token punctuation">)</span> input<span class="token punctuation">.</span><span class="token function">readObject</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span>two<span class="token punctuation">.</span><span class="token function">hashCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-        log<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span>one <span class="token operator">==</span> two<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-        log<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span><span class="token string">"Exception: "</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> (<span class="type">ObjectOutputStream</span> <span class="variable">output</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;Singleton.temp&quot;</span>));</span><br><span class="line">         <span class="type">ObjectInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;Singleton.temp&quot;</span>))) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">Singleton</span> <span class="variable">one</span> <span class="operator">=</span> Singleton.getInstance();</span><br><span class="line">        log.debug(one.hashCode());</span><br><span class="line"></span><br><span class="line">        output.writeObject(one);</span><br><span class="line">        <span class="type">Singleton</span> <span class="variable">two</span> <span class="operator">=</span> (Singleton) input.readObject();</span><br><span class="line">        log.debug(two.hashCode());</span><br><span class="line"></span><br><span class="line">        log.debug(one == two);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;Exception: &quot;</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>执行结果如下：</p>
-<pre class="language-none"><code class="language-none">21:15:36.605 - Singleton&#39;s instance instantiated
-21:15:36.610 - 22756955
-21:15:36.619 - 1582785598
-21:15:36.619 - false</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">21:15:36.605 - Singleton&#x27;s instance instantiated</span><br><span class="line">21:15:36.610 - 22756955</span><br><span class="line">21:15:36.619 - 1582785598</span><br><span class="line">21:15:36.619 - false</span><br></pre></td></tr></table></figure>
 
 <p>可以看出，序列化读取到的对象已经是一个新的对象，单例已被破坏。</p>
 <p>解决方案是为单例类添加如下函数：</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token class-name">Object</span> <span class="token function">readResolve</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-  <span class="token keyword">return</span> instance<span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="title function_">readResolve</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>再次执行后可以发现已经反序列化时得到的仍然是原单例对象：</p>
-<pre class="language-none"><code class="language-none">21:28:34.954 - Singleton&#39;s instance instantiated
-21:28:34.956 - 22756955
-21:28:34.964 - 22756955
-21:28:34.964 - true</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">21:28:34.954 - Singleton&#x27;s instance instantiated</span><br><span class="line">21:28:34.956 - 22756955</span><br><span class="line">21:28:34.964 - 22756955</span><br><span class="line">21:28:34.964 - true</span><br></pre></td></tr></table></figure>
 
 <p>当前序列化有个前提是实现 <code>Serializable</code> 接口，私以为这种情况是一个错误的设计：单例类一般和业务逻辑相关、而序列化一般和封装数据用的实体对象有关，二者不应该出现在同一个类里。</p>
 
@@ -619,13 +445,13 @@ Caused by: java.lang.UnsupportedOperationException: 不允许重复创建实例
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
 <script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js","integrity":"sha256-7wT34TI0pEBeEFoi4z+vhuSddGh6vUTMWdqJ2SDe2jg="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.1/mermaid.min.js","integrity":"sha256-8L3O8tirFUa8Va4NSTAyIbHJeLd6OnlcxgupV9F77e0="}}</script>
   <script src="/js/third-party/tags/mermaid.js"></script>
 
 

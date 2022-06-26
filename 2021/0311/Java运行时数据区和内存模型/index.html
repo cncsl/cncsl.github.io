@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.1.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
 
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32x32.jpg">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16x16.jpg">
@@ -16,10 +16,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.11.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="运行时数据区是指对 JVM 运行过程中涉及到的内存根据功能、目的进行的划分。最近在阅读《深入理解 Java 虚拟机》之后终于了解这方面知识，于是写一篇相关内容的学习总结。">
 <meta property="og:type" content="article">
@@ -29,7 +29,7 @@
 <meta property="og:description" content="运行时数据区是指对 JVM 运行过程中涉及到的内存根据功能、目的进行的划分。最近在阅读《深入理解 Java 虚拟机》之后终于了解这方面知识，于是写一篇相关内容的学习总结。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-11T22:20:46.000Z">
-<meta property="article:modified_time" content="2022-05-04T09:20:50.252Z">
+<meta property="article:modified_time" content="2022-06-26T11:59:45.954Z">
 <meta property="article:author" content="CnCSL">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -251,20 +251,18 @@
 <span id="more"></span>
 
 <h1 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h1><p>《Java 虚拟机规范》定义中，由 JVM 管理的内存区域分为以下几个运行时数据区域：</p>
-<pre class="mermaid">
-flowchart LR
-subgraph 运行时数据区
-    subgraph 线程私有
-        虚拟机栈
-        本地方法栈
-        程序计数器
-    end
-    subgraph 线程共享
-        方法区
-        javaHeap[Java 堆]
-    end
-end
-</pre>
+<pre><code class="highlight mermaid">flowchart LR
+    subgraph 运行时数据区
+        subgraph 线程私有
+            虚拟机栈
+            本地方法栈
+            程序计数器
+        end
+        subgraph 线程共享
+            方法区
+            javaHeap[Java 堆]
+        end
+    end</code></pre>
 
 <h2 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h2><p>程序计数器（Program Counter Register）的生命周期和 Java 线程一致，仅能被相关线程访问。用于记录当前线程所执行的字节码的行号，代码中的分支、循环、跳转、异常处理和多线程发生切换时的线程恢复等基础功能都需要依赖程序计数器完成。当执行 Java 代码时，程序计数器存储正在执行的虚拟机字节码指令地址，而执行本地方法时，程序计数器应该为空。</p>
 <p>《Java 虚拟机规范》中规定程序计数器不会发生 <code>OutOfMemoryError</code> 异常情况。</p>
@@ -278,7 +276,7 @@ end
 <p>《Java 虚拟机规范》对本地方法栈的实现方式没有任何强制规范，故 HotSpot 虚拟机中虚拟机栈和本地方法栈直接合二为一。</p>
 <p>虚拟机栈的大小通过 <code>java</code> 命令的参数 <code>-Xss</code> 设定，</p>
 <h2 id="Java-堆"><a href="#Java-堆" class="headerlink" title="Java 堆"></a>Java 堆</h2><p>Java 堆（Java Heap）在虚拟机启动时就创建，虚拟机关闭时销毁，被所有 Java 线程共享。用于存放所有的对象实例。</p>
-<p>Java 堆受垃圾回收器管理，由于现代主流的垃圾回收器都是基于分代收集理论设计，Java 堆中经常会出现<em>“新生代”、“老年代”、“永久代”、“Eden空间”、“From Survivor空间”、“To Survivor空间”</em> 等名词。这些名词对于 Java 堆的划分，是指一部分垃圾回收器的设计风格，而不是 JVM 具体实现的固有内存布局，更不是 《Java 虚拟机规范》里对 Java 堆的进一步细致划分。并且近年来新出现的垃圾回收器也有不采用分代设计的，再用这些名词划分 Java 堆空间也已经不正确了。</p>
+<p>Java 堆受垃圾回收器管理，由于现代主流的垃圾回收器都是基于分代收集理论设计，Java 堆中经常会出现<em>“新生代”、“老年代”、“永久代”、“Eden 空间”、“From Survivor 空间”、“To Survivor 空间”</em> 等名词。这些名词对于 Java 堆的划分，是指一部分垃圾回收器的设计风格，而不是 JVM 具体实现的固有内存布局，更不是 《Java 虚拟机规范》里对 Java 堆的进一步细致划分。并且近年来新出现的垃圾回收器也有不采用分代设计的，再用这些名词划分 Java 堆空间也已经不正确了。</p>
 <p>Java 堆可能发生 <code>OutOfMemoryError</code>异常：分配内存给新的对象实例失败、且堆无法再拓展时抛出该异常。</p>
 <p>Java 堆的大小通过 <code>java</code> 命令的参数 <code>-Xmx</code> 和 <code>-Xms</code> 设定。</p>
 <h2 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h2><p>方法区（Method Area）和 Java 堆一样在虚拟机启动时就创建，虚拟机关闭时销毁，被所有 Java 线程共享。用于存储已被虚拟机加载的类型信息、常量、静态变量和即时编译器编译后的代码缓存。</p>
@@ -371,13 +369,13 @@ end
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
 <script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js","integrity":"sha256-7wT34TI0pEBeEFoi4z+vhuSddGh6vUTMWdqJ2SDe2jg="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.1/mermaid.min.js","integrity":"sha256-8L3O8tirFUa8Va4NSTAyIbHJeLd6OnlcxgupV9F77e0="}}</script>
   <script src="/js/third-party/tags/mermaid.js"></script>
 
 

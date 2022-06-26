@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.1.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
 
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32x32.jpg">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16x16.jpg">
@@ -16,10 +16,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.11.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="反射作为 Java 高级特性之一，在框架开发中使用很多。">
 <meta property="og:type" content="article">
@@ -29,7 +29,7 @@
 <meta property="og:description" content="反射作为 Java 高级特性之一，在框架开发中使用很多。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-05-20T22:49:45.000Z">
-<meta property="article:modified_time" content="2022-05-04T09:20:50.252Z">
+<meta property="article:modified_time" content="2022-06-26T11:59:45.954Z">
 <meta property="article:author" content="CnCSL">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="反射">
@@ -254,52 +254,21 @@
 <h1 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h1><p>Class 类用于表示已被 JVM 加载的<strong>类型</strong>（为避免歧义，文中用 “Class 实例” 代指类型），它的实例是 Java 基础数据类型、已被 Java 加载的类和实例。枚举是特殊的类，注解是特殊的接口，数组的类型实际也是类。</p>
 <h2 id="获取-Class-对象"><a href="#获取-Class-对象" class="headerlink" title="获取 Class 对象"></a>获取 Class 对象</h2><p>Class 类没有公共的构造方法，所有 Class 实例都是 JVM 的类加载器的 <code>defineClass</code> 方法构建的。我们可以通过以下方法获取已存在的 Class 实例。</p>
 <h3 id="Object-getClass-方法"><a href="#Object-getClass-方法" class="headerlink" title="Object#getClass 方法"></a><em>Object#getClass</em> 方法</h3><p><code>Object#getClass</code> 方法用于<strong>获取一个对象实例对应的 Class 实例</strong>，如果是一个父类引用指向子类实例，返回结果仍然是实际的子类对应的 Class 实例。</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token class-name">String</span> name <span class="token operator">=</span> <span class="token string">"cncsl"</span><span class="token punctuation">;</span>
-<span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> infos <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"cncsl"</span><span class="token punctuation">,</span> <span class="token string">"male"</span><span class="token punctuation">,</span> <span class="token string">"developer"</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
-
-<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//class java.lang.String</span>
-<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>infos<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//class [Ljava.lang.String;</span>
-
-<span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Integer</span><span class="token punctuation">></span></span> numbers <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ArrayList</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>numbers<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//class java.util.ArrayList</span></code></pre>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;cncsl&quot;</span>;</span><br><span class="line">String[] infos = &#123;<span class="string">&quot;cncsl&quot;</span>, <span class="string">&quot;male&quot;</span>, <span class="string">&quot;developer&quot;</span>&#125;;</span><br><span class="line"></span><br><span class="line">System.out.println(name.getClass());<span class="comment">//class java.lang.String</span></span><br><span class="line">System.out.println(infos.getClass());<span class="comment">//class [Ljava.lang.String;</span></span><br><span class="line"></span><br><span class="line">List&lt;Integer&gt; numbers = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">System.out.println(numbers.getClass());<span class="comment">//class java.util.ArrayList</span></span><br></pre></td></tr></table></figure>
 
 <p>注意调用第二次调用输出语句时控制台的输出是 <code>class [Ljava.lang.String;</code>，与普通的 String 对象相比，多了 <code>[L</code> 和 <code>;</code>。</p>
 <h3 id="class-和-TYPE"><a href="#class-和-TYPE" class="headerlink" title=".class 和 .TYPE"></a><em>.class</em> 和 <em>.TYPE</em></h3><p>所有的类和基本数据类型都有 <code>class</code> 属性（严格意义上来说基本数据类型不是对象，不能用“属性”二字来描述），可在<strong>没有可用实例时直接通过类名或基本数据类型关键字获取 Class 实例</strong>。此外每个基本数据类包装类都有 <code>TYPE</code> 属性，可用于获取对应基本数据类型的 Class 实例。</p>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//class java.lang.String</span>
-<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//class [Ljava.lang.String;</span>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(String.class);<span class="comment">//class java.lang.String</span></span><br><span class="line">System.out.println(String[].class);<span class="comment">//class [Ljava.lang.String;</span></span><br><span class="line"></span><br><span class="line">System.out.println(<span class="type">int</span>.class);<span class="comment">//int</span></span><br><span class="line">System.out.println(Integer.class);<span class="comment">//class java.lang.Integer</span></span><br><span class="line">System.out.println(Integer.TYPE);<span class="comment">//int</span></span><br></pre></td></tr></table></figure>
 
-<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//int</span>
-<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token class-name">Integer</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//class java.lang.Integer</span>
-<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token class-name">Integer</span><span class="token punctuation">.</span>TYPE<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//int</span></code></pre>
-
-<p>注意上方基本数据类型关键字的 <code>.class</code>、包装类的 <code>.class</code> 和 <code>.TYPE</code> 的对应关系，  <code>int.class == Integer.TYPE</code> 为真、<code>int.class == Integer.class</code> 为假。</p>
+<p>注意上方基本数据类型关键字的 <code>.class</code>、包装类的 <code>.class</code> 和 <code>.TYPE</code> 的对应关系， <code>int.class == Integer.TYPE</code> 为真、<code>int.class == Integer.class</code> 为假。</p>
 <h3 id="Class-forName-方法"><a href="#Class-forName-方法" class="headerlink" title="Class#forName 方法"></a><em>Class#forName</em> 方法</h3><p>有两个不同类型重载的 <code>Class#forName</code> 方法，<strong>通常用于显式的类加载，并返回 Class 实例</strong>。</p>
 <ul>
 <li><code>public static Class&lt;?&gt; forName(String className)</code>：根据 <code>className</code> 参数指定的全限定名找到并加载相关类型，如果找不到抛出 <code>ClassNotFoundException</code> 异常。</li>
 <li><code>public static Class&lt;?&gt; forName(String name, boolean initialize, ClassLoader loader)</code>：与另一重载类似，参数 <code>initializa</code> 指定是否立即初始化，<code>loader</code> 指定类加载器。</li>
 </ul>
-<pre class="language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> <span class="token punctuation">&#123;</span>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        Class.forName(<span class="string">&quot;io.github.cncsl.Foo&quot;</span>);<span class="comment">//Foo loaded</span></span><br><span class="line">        Class.forName(<span class="string">&quot;io.github.cncsl.Bar&quot;</span>, <span class="literal">false</span>, Main.class.getClassLoader());<span class="comment">//无输出</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Foo</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Foo loaded&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Bar</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Bar loaded&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">ClassNotFoundException</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"io.github.cncsl.Foo"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//Foo loaded</span>
-        <span class="token class-name">Class</span><span class="token punctuation">.</span><span class="token function">forName</span><span class="token punctuation">(</span><span class="token string">"io.github.cncsl.Bar"</span><span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">,</span> <span class="token class-name">Main</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//无输出</span>
-    <span class="token punctuation">&#125;</span>
-
-<span class="token punctuation">&#125;</span>
-
-<span class="token keyword">class</span> <span class="token class-name">Foo</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">static</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"Foo loaded"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span>
-
-<span class="token keyword">class</span> <span class="token class-name">Bar</span> <span class="token punctuation">&#123;</span>
-    <span class="token keyword">static</span> <span class="token punctuation">&#123;</span>
-        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"Bar loaded"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">&#125;</span>
-<span class="token punctuation">&#125;</span></code></pre>
-
-<p>这两个函数底层都是调用私有、静态的本地方法 <code>Class#forName0</code> 实现类加载的。 </p>
+<p>这两个函数底层都是调用私有、静态的本地方法 <code>Class#forName0</code> 实现类加载的。</p>
 <h2 id="Examining-Class-Modifiers-and-Types"><a href="#Examining-Class-Modifiers-and-Types" class="headerlink" title="Examining Class Modifiers and Types"></a>Examining Class Modifiers and Types</h2><h1 id="Member"><a href="#Member" class="headerlink" title="Member"></a>Member</h1><p>一个类声明由字段、方法和构造器共同构成，可以统称为类的成员，反射 API 提供了三个类分别表示这三种成员，<code>Class</code> 类提供了相关方法用于获取这些类的对象。<em>利用反射进行编程的过程实际就是通过 <code>Class</code> 对象获取到想要的成员对象，然后通过成员对象提供的功能进行操作。</em></p>
 <p>下方表中，”继承“指在当前类的父类（以及父类的父类）中定义的 <code>public</code> 修饰的变量，”私有“意为被 <code>private</code> 修饰的。</p>
 <ul>
@@ -514,13 +483,13 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
 <script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
   
 
 
-  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js","integrity":"sha256-7wT34TI0pEBeEFoi4z+vhuSddGh6vUTMWdqJ2SDe2jg="}}</script>
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.1/mermaid.min.js","integrity":"sha256-8L3O8tirFUa8Va4NSTAyIbHJeLd6OnlcxgupV9F77e0="}}</script>
   <script src="/js/third-party/tags/mermaid.js"></script>
 
 
