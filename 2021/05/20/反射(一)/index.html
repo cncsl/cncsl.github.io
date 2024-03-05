@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp","menu_item":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="反射作为 Java 高级特性之一，在框架开发中使用很多。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反射(-)">
+<meta property="og:url" content="https://cncsl.github.io/2021/05/20/%E5%8F%8D%E5%B0%84(%E4%B8%80)/index.html">
+<meta property="og:site_name" content="CnCSL&#39;Blog">
+<meta property="og:description" content="反射作为 Java 高级特性之一，在框架开发中使用很多。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-20T22:49:45.000Z">
+<meta property="article:modified_time" content="2024-03-05T11:09:26.828Z">
+<meta property="article:author" content="CnCSL">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="反射">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://cncsl.github.io/2021/05/20/%E5%8F%8D%E5%B0%84(%E4%B8%80)/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://cncsl.github.io/2021/05/20/%E5%8F%8D%E5%B0%84(%E4%B8%80)/","path":"2021/05/20/反射(一)/","title":"反射(-)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>反射(-) | CnCSL'Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="CnCSL'Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">CnCSL'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">实用主义、极客精神</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Class"><span class="nav-number">1.</span> <span class="nav-text">Class</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-Class-%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.1.</span> <span class="nav-text">获取 Class 对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-getClass-%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">Object#getClass 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#class-%E5%92%8C-TYPE"><span class="nav-number">1.1.2.</span> <span class="nav-text">.class 和 .TYPE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Class-forName-%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.3.</span> <span class="nav-text">Class#forName 方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Examining-Class-Modifiers-and-Types"><span class="nav-number">1.2.</span> <span class="nav-text">Examining Class Modifiers and Types</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Member"><span class="nav-number">2.</span> <span class="nav-text">Member</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Field"><span class="nav-number">2.1.</span> <span class="nav-text">Field</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method"><span class="nav-number">2.2.</span> <span class="nav-text">Method</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="CnCSL"
+      src="/images/logo.jpg">
+  <p class="site-author-name" itemprop="name">CnCSL</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cncsl" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cncsl" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:justitacsl@outlook.com" title="E-Mail → mailto:justitacsl@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cncsl.github.io/2021/05/20/%E5%8F%8D%E5%B0%84(%E4%B8%80)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.jpg">
+      <meta itemprop="name" content="CnCSL">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CnCSL'Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="反射(-) | CnCSL'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          反射(-)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-20 22:49:45" itemprop="dateCreated datePublished" datetime="2021-05-20T22:49:45+00:00">2021-05-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>反射作为 Java 高级特性之一，在框架开发中使用很多。</p>
+<span id="more"></span>
+
+<h1 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h1><p>Class 类用于表示已被 JVM 加载的<strong>类型</strong>（为避免歧义，文中用 “Class 实例” 代指类型），它的实例是 Java 基础数据类型、已被 Java 加载的类和实例。枚举是特殊的类，注解是特殊的接口，数组的类型实际也是类。</p>
+<h2 id="获取-Class-对象"><a href="#获取-Class-对象" class="headerlink" title="获取 Class 对象"></a>获取 Class 对象</h2><p>Class 类没有公共的构造方法，所有 Class 实例都是 JVM 的类加载器的 <code>defineClass</code> 方法构建的。我们可以通过以下方法获取已存在的 Class 实例。</p>
+<h3 id="Object-getClass-方法"><a href="#Object-getClass-方法" class="headerlink" title="Object#getClass 方法"></a><em>Object#getClass</em> 方法</h3><p><code>Object#getClass</code> 方法用于<strong>获取一个对象实例对应的 Class 实例</strong>，如果是一个父类引用指向子类实例，返回结果仍然是实际的子类对应的 Class 实例。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;cncsl&quot;</span>;</span><br><span class="line">String[] infos = &#123;<span class="string">&quot;cncsl&quot;</span>, <span class="string">&quot;male&quot;</span>, <span class="string">&quot;developer&quot;</span>&#125;;</span><br><span class="line"></span><br><span class="line">System.out.println(name.getClass());<span class="comment">//class java.lang.String</span></span><br><span class="line">System.out.println(infos.getClass());<span class="comment">//class [Ljava.lang.String;</span></span><br><span class="line"></span><br><span class="line">List&lt;Integer&gt; numbers = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">System.out.println(numbers.getClass());<span class="comment">//class java.util.ArrayList</span></span><br></pre></td></tr></table></figure>
+
+<p>注意调用第二次调用输出语句时控制台的输出是 <code>class [Ljava.lang.String;</code>，与普通的 String 对象相比，多了 <code>[L</code> 和 <code>;</code>。</p>
+<h3 id="class-和-TYPE"><a href="#class-和-TYPE" class="headerlink" title=".class 和 .TYPE"></a><em>.class</em> 和 <em>.TYPE</em></h3><p>所有的类和基本数据类型都有 <code>class</code> 属性（严格意义上来说基本数据类型不是对象，不能用“属性”二字来描述），可在<strong>没有可用实例时直接通过类名或基本数据类型关键字获取 Class 实例</strong>。此外每个基本数据类包装类都有 <code>TYPE</code> 属性，可用于获取对应基本数据类型的 Class 实例。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(String.class);<span class="comment">//class java.lang.String</span></span><br><span class="line">System.out.println(String[].class);<span class="comment">//class [Ljava.lang.String;</span></span><br><span class="line"></span><br><span class="line">System.out.println(<span class="type">int</span>.class);<span class="comment">//int</span></span><br><span class="line">System.out.println(Integer.class);<span class="comment">//class java.lang.Integer</span></span><br><span class="line">System.out.println(Integer.TYPE);<span class="comment">//int</span></span><br></pre></td></tr></table></figure>
+
+<p>注意上方基本数据类型关键字的 <code>.class</code>、包装类的 <code>.class</code> 和 <code>.TYPE</code> 的对应关系， <code>int.class == Integer.TYPE</code> 为真、<code>int.class == Integer.class</code> 为假。</p>
+<h3 id="Class-forName-方法"><a href="#Class-forName-方法" class="headerlink" title="Class#forName 方法"></a><em>Class#forName</em> 方法</h3><p>有两个不同类型重载的 <code>Class#forName</code> 方法，<strong>通常用于显式的类加载，并返回 Class 实例</strong>。</p>
+<ul>
+<li><code>public static Class&lt;?&gt; forName(String className)</code>：根据 <code>className</code> 参数指定的全限定名找到并加载相关类型，如果找不到抛出 <code>ClassNotFoundException</code> 异常。</li>
+<li><code>public static Class&lt;?&gt; forName(String name, boolean initialize, ClassLoader loader)</code>：与另一重载类似，参数 <code>initializa</code> 指定是否立即初始化，<code>loader</code> 指定类加载器。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        Class.forName(<span class="string">&quot;io.github.cncsl.Foo&quot;</span>);<span class="comment">//Foo loaded</span></span><br><span class="line">        Class.forName(<span class="string">&quot;io.github.cncsl.Bar&quot;</span>, <span class="literal">false</span>, Main.class.getClassLoader());<span class="comment">//无输出</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Foo</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Foo loaded&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Bar</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Bar loaded&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两个函数底层都是调用私有、静态的本地方法 <code>Class#forName0</code> 实现类加载的。</p>
+<h2 id="Examining-Class-Modifiers-and-Types"><a href="#Examining-Class-Modifiers-and-Types" class="headerlink" title="Examining Class Modifiers and Types"></a>Examining Class Modifiers and Types</h2><h1 id="Member"><a href="#Member" class="headerlink" title="Member"></a>Member</h1><p>一个类声明由字段、方法和构造器共同构成，可以统称为类的成员，反射 API 提供了三个类分别表示这三种成员，<code>Class</code> 类提供了相关方法用于获取这些类的对象。<em>利用反射进行编程的过程实际就是通过 <code>Class</code> 对象获取到想要的成员对象，然后通过成员对象提供的功能进行操作。</em></p>
+<p>下方表中，”继承“指在当前类的父类（以及父类的父类）中定义的 <code>public</code> 修饰的变量，”私有“意为被 <code>private</code> 修饰的。</p>
+<ul>
+<li><p>Field：常翻译为字段或成员变量，对应 <code>java.lang.reflect.Field</code>。</p>
+<table>
+<thead>
+<tr>
+<th>Class 实例方法</th>
+<th align="center">列举变量</th>
+<th align="center">可获取继承变量</th>
+<th align="center">可获取私有变量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>getDeclaredField()</code></td>
+<td align="center">否</td>
+<td align="center">否</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td><code>getField()</code></td>
+<td align="center">否</td>
+<td align="center">是</td>
+<td align="center">否</td>
+</tr>
+<tr>
+<td><code>getDeclaredFields()</code></td>
+<td align="center">是</td>
+<td align="center">否</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td><code>getFields()</code></td>
+<td align="center">是</td>
+<td align="center">是</td>
+<td align="center">否</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>Method：常翻译为方法或成员函数，对应 <code>java.lang.reflect.Method</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">Class 实例方法</th>
+<th align="center">列举函数</th>
+<th align="center">可获取继承函数</th>
+<th align="center">可获取私有函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>getDeclaredMethod()</code></td>
+<td align="center">否</td>
+<td align="center">否</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td align="left"><code>getMethod()</code></td>
+<td align="center">否</td>
+<td align="center">是</td>
+<td align="center">否</td>
+</tr>
+<tr>
+<td align="left"><code>getDeclaredMethods()</code></td>
+<td align="center">是</td>
+<td align="center">否</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td align="left"><code>getMethods()</code></td>
+<td align="center">是</td>
+<td align="center">是</td>
+<td align="center">否</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>Constructor：常翻译为构造器或构造函数，对应 <code>java.lang.reflect.Constructor</code>。</p>
+<table>
+<thead>
+<tr>
+<th>Class 实例方法</th>
+<th align="center">列举构造器</th>
+<th align="center">可获取私有构造器</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>getDeclaredConstructor()</code></td>
+<td align="center">否</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td><code>getConstructor()</code></td>
+<td align="center">否</td>
+<td align="center">否</td>
+</tr>
+<tr>
+<td><code>getDeclaredConstructors()</code></td>
+<td align="center">是</td>
+<td align="center">是</td>
+</tr>
+<tr>
+<td><code>getConstructors()</code></td>
+<td align="center">是</td>
+<td align="center">否</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h2 id="Field"><a href="#Field" class="headerlink" title="Field"></a>Field</h2><p><code>Field</code> 对象实例封装了一个字段的名称、类型、修饰符和注解，可用于动态的访问和修改字段的值。常用方法有：</p>
+<ul>
+<li>基本信息<ul>
+<li><code>String getName()</code></li>
+<li><code>Class&lt;?&gt; getType()</code></li>
+<li><code>Type getGenericType()</code></li>
+</ul>
+</li>
+<li>获取：参数 obj 指定具体的类<ul>
+<li>用于基本数据类型的 <code>getXxx(Object obj)</code></li>
+<li>用于对象的 <code>get(Object obj)</code></li>
+</ul>
+</li>
+<li>修改：参数 obj 指定具体的类<ul>
+<li>用于基本数据类型的 <code>setXxx(Object obj, Xxx value)</code></li>
+<li>用于对象的 <code>set(Object obj, Object value)</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h2><p><code>Method</code> 对象实例封装了一个函数的名称、返回值类型、形参列表、异常列表等，可用于动态的调用。常用方法有：</p>
+<ul>
+<li><p>基本信息：</p>
+<ul>
+<li><code>String getName()</code></li>
+<li><code>Class&lt;?&gt; getReturnType()</code></li>
+<li><code>Class&lt;?&gt;[] getParameterTypes()</code></li>
+<li><code>Class&lt;?&gt;[] getExceptionTypes()</code></li>
+</ul>
+</li>
+<li><p>调用：<code>Object invoke(Object obj, Object... args)</code> 第一个参数用于指定调用类，后面的变长参数是传给函数的参数。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>CnCSL
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://cncsl.github.io/2021/05/20/%E5%8F%8D%E5%B0%84(%E4%B8%80)/" title="反射(-)">https://cncsl.github.io/2021/05/20/反射(一)/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/%E5%8F%8D%E5%B0%84/" rel="tag"># 反射</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/03/12/%E5%86%8D%E7%9C%8BJava%E5%8D%95%E4%BE%8B/" rel="prev" title="再看Java单例">
+                  <i class="fa fa-chevron-left"></i> 再看Java单例
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/06/16/Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="next" title="Redis 数据类型">
+                  Redis 数据类型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CnCSL</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

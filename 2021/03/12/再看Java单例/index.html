@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo-16x16.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cncsl.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp","menu_item":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="此前面试遇到了单例问题，本以为已经背的滚瓜烂熟，没想到被问单例如何避免被反射和序列化破坏，虽然后来还是等到了通知，但还是复习一下单例的实现方式，并学习防止反射和序列化破坏的手段。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="再看Java单例">
+<meta property="og:url" content="https://cncsl.github.io/2021/03/12/%E5%86%8D%E7%9C%8BJava%E5%8D%95%E4%BE%8B/index.html">
+<meta property="og:site_name" content="CnCSL&#39;Blog">
+<meta property="og:description" content="此前面试遇到了单例问题，本以为已经背的滚瓜烂熟，没想到被问单例如何避免被反射和序列化破坏，虽然后来还是等到了通知，但还是复习一下单例的实现方式，并学习防止反射和序列化破坏的手段。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-12T21:54:46.000Z">
+<meta property="article:modified_time" content="2024-03-05T11:09:26.828Z">
+<meta property="article:author" content="CnCSL">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://cncsl.github.io/2021/03/12/%E5%86%8D%E7%9C%8BJava%E5%8D%95%E4%BE%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://cncsl.github.io/2021/03/12/%E5%86%8D%E7%9C%8BJava%E5%8D%95%E4%BE%8B/","path":"2021/03/12/再看Java单例/","title":"再看Java单例"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>再看Java单例 | CnCSL'Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="CnCSL'Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">CnCSL'Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">实用主义、极客精神</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">12</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">8</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">11</span></a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">基本实现方式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A5%BF%E6%B1%89%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">饿汉式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E9%94%81%E6%A3%80%E6%9F%A5%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">双锁检查式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile-%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.2.1.</span> <span class="nav-text">volatile 关键字的作用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">静态内部类式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%9A%E4%B8%BE%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">枚举式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%B2%E5%8F%8D%E5%B0%84%E5%92%8C%E5%BA%8F%E5%88%97%E5%8C%96%E7%A0%B4%E5%9D%8F%E5%8D%95%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">防反射和序列化破坏单例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E6%89%8B%E6%AE%B5"><span class="nav-number">2.1.</span> <span class="nav-text">反射手段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E6%89%8B%E6%AE%B5"><span class="nav-number">2.2.</span> <span class="nav-text">序列化手段</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="CnCSL"
+      src="/images/logo.jpg">
+  <p class="site-author-name" itemprop="name">CnCSL</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/cncsl" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;cncsl" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:justitacsl@outlook.com" title="E-Mail → mailto:justitacsl@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://cncsl.github.io/2021/03/12/%E5%86%8D%E7%9C%8BJava%E5%8D%95%E4%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/logo.jpg">
+      <meta itemprop="name" content="CnCSL">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CnCSL'Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="再看Java单例 | CnCSL'Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          再看Java单例
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-12 21:54:46" itemprop="dateCreated datePublished" datetime="2021-03-12T21:54:46+00:00">2021-03-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>此前面试遇到了单例问题，本以为已经背的滚瓜烂熟，没想到被问单例如何避免被反射和序列化破坏，虽然后来还是等到了通知，但还是复习一下单例的实现方式，并学习防止反射和序列化破坏的手段。</p>
+<span id="more"></span>
+
+<h1 id="基本实现方式"><a href="#基本实现方式" class="headerlink" title="基本实现方式"></a>基本实现方式</h1><p>其他相关资料中，最多的能数出八种单例实现方式，而实际上其中有些实现并不具备实际意义，在文中出现也仅是为了指出存在的问题便于引出下文。本文仅介绍有实际意义的单例实现模式。为了缩减篇幅，先给出一个后续出现代码的模板的类图：</p>
+<pre><code class="highlight mermaid">classDiagram
+    class Singleton &#123;
+        -Logger log$
+        -Singleton instance$
+        +getInstance()$ Singleton
+        +loadClass()$ void
+        +function() void
+        -Singleton()
+    &#125;</code></pre>
+
+<p>单例类 Singleton 模板：后文中介绍具体实现方式仅给出 <code>Singleton#instance</code> 引用和 <code>Singleton#getInstance</code> 方法的内容，其他内容无变化。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">log</span> <span class="operator">=</span> LogManager.getLogger(Singleton.class);</span><br><span class="line">    <span class="comment">//单例引用，不同实现方式有所不同</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取单例的函数，不同实现方式有所不同</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 单例</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">//some code</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 静态方法，用于触发虚拟机类加载，仅有一行日志用于观察类加载时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">load</span><span class="params">()</span> &#123;</span><br><span class="line">        log.debug(<span class="string">&quot;&#123;&#125; loaded&quot;</span>, Singleton.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 单例类的功能函数，仅有一行日志</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">function</span><span class="params">()</span> &#123;</span><br><span class="line">        log.debug(<span class="string">&quot;Singleton&#x27;s instance using&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有的构造函数，仅有一行日志用于观察构造时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;</span><br><span class="line">        log.debug(<span class="string">&quot;Singleton&#x27;s instance instantiated&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用单例类的 Main 类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="comment">//先触发类加载</span></span><br><span class="line">        Singleton.load();</span><br><span class="line">        <span class="comment">//等待一定时间</span></span><br><span class="line">        TimeUnit.SECONDS.sleep(<span class="number">3</span>);</span><br><span class="line">        <span class="comment">//执行单例的功能函数</span></span><br><span class="line">        Singleton.getInstance().function();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h2><p>饿汉式具有线程安全和非 Lazy 初始化的特点，实现难度最简单。由于 JVM 的类加载是单线程的，且已加载过的类不会重复加载，所以饿汉式天生具有线程安全的特点。</p>
+<ul>
+<li><p>由于是类加载即初始化，单例引用可添加 <code>final</code> 修饰。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Singleton</span> <span class="variable">instance</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//下面写法效果相同</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">public static final Singleton instance;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">static &#123;</span></span><br><span class="line"><span class="comment">    instance = new Singleton();</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取单例函数：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">13:19:32.565 - Singleton&#x27;s instance instantiated</span><br><span class="line">13:19:32.569 - class cncsl.github.io.Singleton loaded</span><br><span class="line">13:19:35.572 - Singleton&#x27;s instance using</span><br></pre></td></tr></table></figure>
+
+<p>从日志可以看出，单例类刚加载时就调用构造函数完成了单实例的初始化。</p>
+<h2 id="双锁检查式"><a href="#双锁检查式" class="headerlink" title="双锁检查式"></a>双锁检查式</h2><p>双锁检查是经常出现于面试题中的实现方式，具有线程安全和 Lazy 初始化的特点。需要自行实现线程安全的单例初始化，且要避免指令重排序导致的安全问题，实现难度较高。</p>
+<ul>
+<li><p>为了避免指令重排序导致的线程安全问题需要给单例引用添加 <code>volatile</code> 修饰：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton instance;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>双锁检查式最难的部分就是在获取单例的函数中进行两次非 null 判断和加锁后再初始化的过程：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">13:30:07.524 - class cncsl.github.io.Singleton loaded</span><br><span class="line">13:30:10.541 - Singleton&#x27;s instance instantiated</span><br><span class="line">13:30:10.541 - Singleton&#x27;s instance using</span><br></pre></td></tr></table></figure>
+
+<p>从日志可以看出，类加载之后并没有立即初始化，实际需要调用到单例的功能函数前才进行了初始化。</p>
+<h3 id="volatile-关键字的作用"><a href="#volatile-关键字的作用" class="headerlink" title="volatile 关键字的作用"></a>volatile 关键字的作用</h3><p><code>volatile</code> 修饰的变量有可见性和禁止指令重排序优化两个特点：</p>
+<ul>
+<li>可见性：一个线程修改了 <code>volatile</code> 变量，其他线程立即可知。</li>
+<li>禁止指令重排序优化：处理器为了提高运算单元的利用率，会对指令进行乱序执行优化，处理器能够保证经过乱序的指令和原始顺序的指令执行结果一致。</li>
+</ul>
+<p>在多线程环境中，指令重排序优化可能导致访问共享数据出错。这也是双锁检查式单例的单例变量用 volatile 修饰的原因。</p>
+<p>Java 源码中 <code>instance = new Singleton();</code> 一句对应的字节码指令为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">NEW Singleton</span><br><span class="line">DUP</span><br><span class="line">INVOKESPECIAL Singleton.&lt;init&gt; ()V</span><br><span class="line">PUTSTATIC Singleton.instance : LSingleton;</span><br></pre></td></tr></table></figure>
+
+<p>总共分为四个步骤：</p>
+<ol>
+<li><code>NEW</code> 指令创建对象（此时还没有执行构造函数，对象的所有成员变量都是默认的“零值”），将对象引用压入操作数栈。</li>
+<li><code>DUP</code> 指令将当前操作数栈顶的值拷贝一份（此时操作数栈顶的两个元素是两个相同的、值为前一步创建的对象的引用）。</li>
+<li><code>INVOKESPECIAL</code> 指令会调用当前操作数栈顶的对象的 <code>&lt;init&gt;</code> 方法，该方法是根据空参的构造函数生成的。</li>
+<li><code>PUTSTATIC</code> 指令将操作数栈顶的对象引用赋值给 Singleton 类的 instance 引用。</li>
+</ol>
+<p>根据指令重排序的原则，三、四两步之间乱序执行不会影响结果，如果未加 <code>volatile</code> 修饰、发生了指令重排，且两个线程恰好按照如下步骤执行就会发生异常情况（字节码指令和处理器指令没有对应关系，所以这个例子并不是很严谨，但理解当前的上下文够用了）：</p>
+<pre><code class="highlight mermaid">sequenceDiagram
+    threadOne -&gt;&gt; threadOne : NEW Singleton
+    threadOne -&gt;&gt; threadOne : DUP
+    threadOne -&gt;&gt; Singleton.class : PUTSTATIC Singleton.instance : LSingleton;
+
+    threadTwo -&gt;&gt; Singleton.class : 调用 getInstance() 函数
+    Singleton.class -&gt;&gt; threadTwo : Singleton.instance 引用不为 null，返回引用值
+
+    threadTwo -&gt;&gt; threadTwo : 使用单例对象
+    Note over threadTwo : 此时单例对象还未完全初始化，发生异常
+
+    threadOne -&gt;&gt; threadOne : INVOKESPECIAL</code></pre>
+
+<p>而如果 <code>instance</code> 使用 <code>volatile</code> 修饰，在指令 <code>INVOKESPECIAL</code> 和 <code>PUTSTATIC</code> 之间就不会发生指令重排，确保了上述问题不会发生。另外请注意，Java 中双锁检查式方式实现的单例在 Java 5 之后才能完全保证可用，此前版本依然会出现问题。</p>
+<h2 id="静态内部类式"><a href="#静态内部类式" class="headerlink" title="静态内部类式"></a>静态内部类式</h2><p>静态内部类式也用到了 JVM 类加载器的特性，既保证线程安全的情况下实现了 Lazy 加载。</p>
+<ul>
+<li><p>添加一个静态内部类持有单例引用：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">InstanceHolder</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Singleton</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取单例的函数调用时才会加载静态内部类，进而触发单实例的初始化：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> InstanceHolder.INSTANCE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>执行效果与双锁检查式相同，不在赘述。</p>
+<h2 id="枚举式"><a href="#枚举式" class="headerlink" title="枚举式"></a>枚举式</h2><p>枚举式的实现是将单例类写成一个枚举，枚举值仅包含一个单例引用，再加上与业务逻辑相关的功能函数即可。由于枚举的特点，这种实现方式具有线程安全、非 Lazy 加载和防止反射、序列化破坏单例等特点。</p>
+<p>由于改动较大附上全部代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">Singleton</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 单例枚举值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取单例的函数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 静态方法，用于触发虚拟机类加载，仅有一行日志用于观察类加载时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">load</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.printf(<span class="string">&quot;%s - %s loaded%n&quot;</span>, LocalTime.now().toString(), Singleton.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 单例类的功能函数，仅有一行日志</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">function</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.printf(<span class="string">&quot;%s - Singleton&#x27;s instance using%n&quot;</span>, LocalTime.now().toString());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有的构造函数，仅有一行日志用于观察构造时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Singleton() &#123;</span><br><span class="line">        System.out.printf(<span class="string">&quot;%s - Singleton&#x27;s instance instantiated%n&quot;</span>, LocalTime.now().toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">13:57:27.142 - Singleton&#x27;s instance instantiated</span><br><span class="line">13:57:27.154 - class cncsl.github.io.Singleton loaded</span><br><span class="line">13:57:30.156 - Singleton&#x27;s instance using</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，枚举类加载之后立即初始化了单例对象，而三秒后执行了单例类的功能函数。</p>
+<h1 id="防反射和序列化破坏单例"><a href="#防反射和序列化破坏单例" class="headerlink" title="防反射和序列化破坏单例"></a>防反射和序列化破坏单例</h1><p>在 Java 中，通过序列化也能创建新的对象实例，而反射能突破构造函数 <code>private</code> 的限制，下面介绍一下如何避免这些情况的发生。枚举式单例天生避免了这些问题，下方内容都是针对其他三种实现方式而言的。</p>
+<p>另外，请明白一个前提，设计模式是一种设计的方式，既不是某种语言的语法约束，除了枚举方式以外、其他实现方式在有人恶意破坏的情况都无法完全确保单例。在这种情况下，需要考虑的不是如何改进现有的设计，而是找出企图通过这些手段破坏单例的人。所以下面的知识一般用于面试：当遇到如何确保单例的问题时，首先说枚举式设计方式、然后才是下面的内容。</p>
+<h2 id="反射手段"><a href="#反射手段" class="headerlink" title="反射手段"></a>反射手段</h2><p>下方是通过反射方式破坏单例的过程：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//通过getInstance()获取</span></span><br><span class="line">        <span class="type">Singleton</span> <span class="variable">one</span> <span class="operator">=</span> Singleton.getInstance();</span><br><span class="line">        log.debug(one.hashCode());</span><br><span class="line">        <span class="comment">//反射调用构造函数</span></span><br><span class="line">        Constructor&lt;Singleton&gt; constructor = Singleton.class.getDeclaredConstructor();</span><br><span class="line">        constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">Singleton</span> <span class="variable">two</span> <span class="operator">=</span> constructor.newInstance();</span><br><span class="line">        log.debug(two.hashCode());</span><br><span class="line">        log.debug(one == two);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;Exception: &quot;</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">15:10:48.237 - Singleton&#x27;s instance instantiated</span><br><span class="line">15:10:48.240 - 1159114532</span><br><span class="line">15:10:48.240 - Singleton&#x27;s instance instantiated</span><br><span class="line">15:10:48.240 - 1832580921</span><br><span class="line">15:10:48.240 - false</span><br></pre></td></tr></table></figure>
+
+<p>可以看出目前程序中以存在两个 Singleton 类的实例，单例已经被破坏。</p>
+<p>解决方案为在单例类的构造函数中进行检查，如果单例引用不为 null 就抛出异常：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="title function_">Singleton</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (instance != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnsupportedOperationException</span>(<span class="string">&quot;不允许重复创建实例&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log.debug(<span class="string">&quot;Singleton&#x27;s instance instantiated&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再次执行结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">15:17:36.834 - Singleton&#x27;s instance instantiated</span><br><span class="line">15:17:36.836 - 1159114532</span><br><span class="line">15:17:36.836 - Exception:</span><br><span class="line">java.lang.reflect.InvocationTargetException: null</span><br><span class="line">    at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[?:1.8.0_261]</span><br><span class="line">    at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62) ~[?:1.8.0_261]</span><br><span class="line">    at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45) ~[?:1.8.0_261]</span><br><span class="line">    at java.lang.reflect.Constructor.newInstance(Constructor.java:423) ~[?:1.8.0_261]</span><br><span class="line">    at cncsl.github.io.Main.main(Main.java:18) [classes/:?]</span><br><span class="line">Caused by: java.lang.UnsupportedOperationException: 不允许重复创建实例</span><br><span class="line">    at cncsl.github.io.Singleton.&lt;init&gt;(Singleton.java:32) ~[classes/:?]</span><br><span class="line">    ... 5 more</span><br></pre></td></tr></table></figure>
+
+<p>当然，攻击者可以在外部先记录一份 <code>instance</code> 引用，通过反射修改 <code>instance</code> 引用后再创建对象，这样程序中会存在两个 <code>Singleton</code> 实例。</p>
+<h2 id="序列化手段"><a href="#序列化手段" class="headerlink" title="序列化手段"></a>序列化手段</h2><p>下方是通过序列化手段破坏单例的过程：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> (<span class="type">ObjectOutputStream</span> <span class="variable">output</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;Singleton.temp&quot;</span>));</span><br><span class="line">         <span class="type">ObjectInputStream</span> <span class="variable">input</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="string">&quot;Singleton.temp&quot;</span>))) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">Singleton</span> <span class="variable">one</span> <span class="operator">=</span> Singleton.getInstance();</span><br><span class="line">        log.debug(one.hashCode());</span><br><span class="line"></span><br><span class="line">        output.writeObject(one);</span><br><span class="line">        <span class="type">Singleton</span> <span class="variable">two</span> <span class="operator">=</span> (Singleton) input.readObject();</span><br><span class="line">        log.debug(two.hashCode());</span><br><span class="line"></span><br><span class="line">        log.debug(one == two);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">&quot;Exception: &quot;</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">21:15:36.605 - Singleton&#x27;s instance instantiated</span><br><span class="line">21:15:36.610 - 22756955</span><br><span class="line">21:15:36.619 - 1582785598</span><br><span class="line">21:15:36.619 - false</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，序列化读取到的对象已经是一个新的对象，单例已被破坏。</p>
+<p>解决方案是为单例类添加如下函数：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="title function_">readResolve</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再次执行后可以发现已经反序列化时得到的仍然是原单例对象：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">21:28:34.954 - Singleton&#x27;s instance instantiated</span><br><span class="line">21:28:34.956 - 22756955</span><br><span class="line">21:28:34.964 - 22756955</span><br><span class="line">21:28:34.964 - true</span><br></pre></td></tr></table></figure>
+
+<p>当前序列化有个前提是实现 <code>Serializable</code> 接口，私以为这种情况是一个错误的设计：单例类一般和业务逻辑相关、而序列化一般和封装数据用的实体对象有关，二者不应该出现在同一个类里。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>CnCSL
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://cncsl.github.io/2021/03/12/%E5%86%8D%E7%9C%8BJava%E5%8D%95%E4%BE%8B/" title="再看Java单例">https://cncsl.github.io/2021/03/12/再看Java单例/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/03/11/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%92%8C%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" rel="prev" title="Java运行时数据区">
+                  <i class="fa fa-chevron-left"></i> Java运行时数据区
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/05/20/%E5%8F%8D%E5%B0%84(%E4%B8%80)/" rel="next" title="反射(-)">
+                  反射(-) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CnCSL</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
