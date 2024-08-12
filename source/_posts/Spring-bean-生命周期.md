@@ -38,7 +38,7 @@ Spring 提供的拓展点可以分为：
 2. 对象实例化
 3. `postProcessAfterInstantiation`：在普通 bean 对象实例化完成之后调用
 
-````mermaid
+```mermaid
 flowchart LR
     ClassLoad[类加载] --> postProcessBeforeInstantiation{实例化前拓展点}
     postProcessBeforeInstantiation --> Instantiation[对象实例化]
@@ -238,7 +238,7 @@ public class SimpleBean
     }
 
 }
-````
+```
 
 EmptyBean 类
 
