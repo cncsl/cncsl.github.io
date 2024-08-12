@@ -118,7 +118,7 @@ Class<?> getProxyClass(ClassLoader loader,Class<?>...interfaces)throws IllegalAr
 
 - 动态代理类继承 `java.lang.reflect.Proxy` ，自身都是 public、final、非 abstract 的。
 
-- 动态代理类名都以 “$Proxy" 开头，如果 interfaces 中有一个非 public 的接口，生成的动态代理类在该接口的包路径下。
+- 动态代理类名都以 “$Proxy” 开头，如果 interfaces 中有一个非 public 的接口，生成的动态代理类在该接口的包路径下。
 
 - 动态代理类以固定的顺序（interfaces 的顺序）实现所有接口，如果使用不同的顺序再次调用会生成另一个 Class 对象，使用相同的顺序再次调用会直接返回已有的 Class 对象，用代码体现就是：
   

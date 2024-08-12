@@ -21,7 +21,7 @@ Linux 系统中查找文件的命令有 `which`、`whereis`、`locate` 和 `find
 
     ```shell
     # Centos
-    # 以绝对路径调用 which，这样就不会受到 Centos 默认的几个参数影响
+    # 以绝对路径调用 which，这样就不会受到 Centos 通过 alias 拓展的默认参数影响
     # 返回结果说明找不到 ll 命令
     $ /usr/bin/which ll
     /usr/bin/which: no ll in (/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)
@@ -38,8 +38,8 @@ Linux 系统中查找文件的命令有 `which`、`whereis`、`locate` 和 `find
 `which` 的其他几个参数如下：
 
 -   `--tty-only`：尽在终端调用的情况下附带右侧添加的参数，其他情况下不接收右侧其他参数（此处的参数值 `--show-dot`、`--show-tilde` 此类，输入的待查询命令仍然会接收），通过这个命令可以保证 Shell 脚本中的 `which` 命令正确执行。
--   `--show-dot`：输出以 "." 符号开头的目录。Linux 中 "." 符号开头的目录是约定的隐藏文件夹，没有该参数时会忽略这些目录。
--   `--show-tilde`：将用户家目录替换成 "~" 符号输出。Linux 中 "~" 符号是登录用户家目录的缩写，如果登录用户名为 cncsl，则 "~" 指 "/home/cncsl" 目录。当使用 root 账号登录时该参数无效。
+-   `--show-dot`：输出以 `.` 符号开头的目录。Linux 中 `.` 符号开头的目录是约定的隐藏文件夹，没有该参数时会忽略这些目录。
+-   `--show-tilde`：将用户家目录替换成 `~` 符号输出。Linux 中 `~` 符号是登录用户家目录的缩写，如果登录用户名为 cncsl，则 `~` 指 `/home/cncsl` 目录。当使用 root 账号登录时该参数无效。
 
 # whereis
 
@@ -102,7 +102,7 @@ $ locate -l 10 *.gz
 $ locate -r tomcat.2021-01-[0-3][0-9].log
 ```
 
-由于 `locate` 命令是从数据库查找文件，新创建的文件可能由于未被记录到数据库中而无法查询到，这种时候需要使用 `updatedb` 命令手动更新数据库。
+由于 `locate` 命令是从定期更新的数据库查找文件，新创建的文件可能未被记录、而无法查到，这种时候需要使用 `updatedb` 命令手动更新数据库。
 
 # find
 
@@ -135,7 +135,7 @@ find [path...] [expression]
 -   查询系统中、三个月之前创建的、一个月之内没有访问过、大于 30M 的日志文件，并删除：
 
     ```shell
-    find / -ctime +90 -atime +30 -size +1M -name "*.log" -delete
+    find / -ctime +90 -atime +30 -size +30M -name "*.log" -delete
     ```
 
 `find` 会实际的扫描磁盘，所以速度会明显小于前三个。
